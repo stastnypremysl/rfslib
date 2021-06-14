@@ -5,8 +5,8 @@ Libraries provides Python3 universal interface for multiple protocols like SFTP,
 ## Installation
 TODO
 
-## Documentaion
-TODO
+## Documentation
+Documentation can be found at repository https://git.profinit.eu/rfs/rfslib-docs
 
 ## TODO
 * Transactions 
