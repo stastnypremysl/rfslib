@@ -405,7 +405,7 @@ class PConnection(ABC):
         
         self.fmv(name, newname)
 
-    logging.debug("Moving remote file {} inside a remote directory {} is completed.".format(old_name, new_name))
+    logging.debug("Moving remote files {} inside a remote directory {} is completed.".format(old_names, new_name))
 
 
   def mv(self, old_names, new_name):
