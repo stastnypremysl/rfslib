@@ -574,12 +574,18 @@ class PConnection(ABC):
       return map(prepend_d, self.ls(remote_path))
     else: 
       return [remote_path]
+
+  def touch(self, remote_path):
+    _tmp_file = tempfile.NamedTemporaryFile()
+    tmp_file = _tmp_file.name
+    self.push(tmp_file, remote_path)    
   
   def __enter__(self):
       return self
 
   def __exit__(self, exc_type, exc_val, exc_tb):
       self.close()
+
 
 
 
