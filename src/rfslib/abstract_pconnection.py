@@ -307,7 +307,7 @@ class PConnection(ABC):
     logging.debug("Making a directory file {}.".format(remote_path))
 
     remote_path = path_normalize(remote_path)
-    Rself.__check_file_nonexistance(remote_path)
+    self.__check_file_nonexistance(remote_path)
 
     self._mkdir(remote_path)
 
@@ -374,7 +374,7 @@ class PConnection(ABC):
   
   # mv to dir
   def dmv(self, old_names, target_dir):
-    logging.debug("Moving remote file {} inside a remote directory {}.".format(old_name, new_name))
+    logging.debug("Moving remote file {} inside a remote target directory {}.".format(old_names, target_dir))
 
     old_names = [*map(path_normalize, old_names)]
     target_dir = path_normalize(target_dir)
@@ -405,11 +405,11 @@ class PConnection(ABC):
         
         self.fmv(name, newname)
 
-    logging.debug("Moving remote file {} inside a remote directory {} is completed.".format(old_name, new_name))
+    logging.debug("Moving remote files {} inside a remote directory {} is completed.".format(old_names, new_name))
 
 
   def mv(self, old_names, new_name):
-    logging.debug("Moving remote file {} to a remote destination {}.".format(old_name, new_name))
+    logging.debug("Moving remote file {} to a remote destination {}.".format(old_names, new_name))
 
     if self.lexists(new_name) and self.isdir(new_name):
       self.dmv(old_names, new_name)
@@ -423,9 +423,12 @@ class PConnection(ABC):
         else:
           raise InterruptedError("Cannot move more than 1 file to non-existent location {}.".format(new_name))
       else:
-        self.fmv(old_names[0], new_name)
+        if self.isdir(old_names[0]):
+          self.rename(old_names[0], new_name)
+        else:
+          self.fmv(old_names[0], new_name)
 
-    logging.debug("Moving remote file {} to a remote destination {} is completed.".format(old_name, new_name))
+    logging.debug("Moving remote file {} to a remote destination {} is completed.".format(old_names, new_name))
           
 
   def fcp(self, old_name, new_name):

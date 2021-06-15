@@ -50,7 +50,7 @@ class SftpPConnection(abstract_pconnection.PConnection):
     return result
   
   def _mkdir(self, remote_path):
-    self.__sftp.mkdir(remote_path, mode=744)
+    self.__sftp.mkdir(remote_path)
 
   def _rmdir(self, remote_path):
     self.__sftp.rmdir(remote_path)

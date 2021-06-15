@@ -113,7 +113,7 @@ def generic_cp(conn, sources, dest, recursive=False):
     
 
 def generic_mv(conn, sources, dest):
-  logging.debug("Starting generic_mv. (recursive={})".format(recursive))
+  logging.debug("Starting generic_mv.")
 
   sources = map(generic_path_normalize, sources)
   dest = generic_path_normalize(dest)
@@ -125,7 +125,7 @@ def generic_mv(conn, sources, dest):
     logging.debug("generic_mv: Destination {} is remote. It is a folder: {}".format(dest.path, dest_dir))
 
     logging.debug("generic_mv: Dealing with remote files. ")
-    conn.mv(remote_src_paths, dest.path, recursive=recursive)
+    conn.mv(remote_src_paths, dest.path)
 
     logging.debug("generic_mv: Dealing with local files. ")
     for l_file in local_src_paths:

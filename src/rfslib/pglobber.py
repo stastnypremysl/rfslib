@@ -35,7 +35,7 @@ class PGlobber():
     else:
       i_result = ""
       for r in result:
-        i_result += r + ", "
+        i_result += "\n" + r
 
       logging.info("Wildcard {} succeded resolution. Returning {}".format(pathname, i_result))
       return result
