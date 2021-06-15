@@ -307,7 +307,7 @@ class PConnection(ABC):
     logging.debug("Making a directory file {}.".format(remote_path))
 
     remote_path = path_normalize(remote_path)
-    Rself.__check_file_nonexistance(remote_path)
+    self.__check_file_nonexistance(remote_path)
 
     self._mkdir(remote_path)
 
