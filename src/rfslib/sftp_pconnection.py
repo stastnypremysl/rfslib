@@ -11,7 +11,7 @@ class SftpPConnection(abstract_pconnection.PConnection):
     client.load_system_host_keys()
     
     host_key_policy = None
-    if arg["strict_host_key_checking"] == False:
+    if arg["no_strict_host_key_checking"] == True:
       host_key_policy = paramiko.client.WarningPolicy
 
     else:
@@ -44,7 +44,7 @@ class SftpPConnection(abstract_pconnection.PConnection):
   def _isdir(self, remote_path):
     result = False
     try:
-      result = S_ISDIR(self._sftp.stat(remote_path).st_mode)
+      result = S_ISDIR(self.__sftp.stat(remote_path).st_mode)
     except IOError:     # no such file
       result = False
     return result
@@ -60,7 +60,7 @@ class SftpPConnection(abstract_pconnection.PConnection):
 
   def _exists(self, remote_path):
     try:
-      self.__sftp.stat(remotepath)
+      self.__sftp.stat(remote_path)
     except IOError:
       return False
 
@@ -68,7 +68,7 @@ class SftpPConnection(abstract_pconnection.PConnection):
   
   def _lexists(self, remote_path):
     try:
-      self._sftp.lstat(remotepath)
+      self.__sftp.lstat(remote_path)
     except IOError:
       return False
     return True
