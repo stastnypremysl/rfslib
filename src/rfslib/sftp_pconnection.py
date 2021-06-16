@@ -9,14 +9,16 @@ class SftpPConnection(abstract_pconnection.PConnection):
     super().__init__(**arg)
 
     client = paramiko.SSHClient()    
-    client.load_system_host_keys()
 
     host_key_policy = None
-    if arg["no_strict_host_key_checking"] == True:
-      host_key_policy = paramiko.client.WarningPolicy
+    if arg["no_host_key_checking"] == True:
       logging.warning("DANGER! Strict host key checking is disabled.")
 
+      # This policy just ignore everything
+      host_key_policy = paramiko.client.MissingHostKeyPolicy
+
     else:
+      client.load_system_host_keys()
       host_key_policy = paramiko.client.RejectPolicy
 
     client.set_missing_host_key_policy(host_key_policy)
