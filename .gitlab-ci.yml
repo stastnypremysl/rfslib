@@ -1,7 +1,7 @@
 stages:
-- run
+- build
 - test
-- pages
+- deploy
 
 # Official language image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/python/tags/
@@ -35,7 +35,7 @@ test:
     - tox -e py36,flake8
 
 run:
-  stage: run
+  stage: build
   script:
     - python setup.py bdist_wheel
     # an alternative approach is to install and run:
@@ -46,7 +46,7 @@ run:
       - dist/*.whl
 
 pages:
-  stage: pages
+  stage: build
   script:
     - pip install sphinx sphinx-rtd-theme
     - cd doc ; make html
