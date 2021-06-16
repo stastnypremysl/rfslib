@@ -2,22 +2,24 @@ import paramiko
 from rfslib import abstract_pconnection
 
 from stat import S_ISDIR
+import logging
 
 class SftpPConnection(abstract_pconnection.PConnection):
   def __init__(self, **arg):
     super().__init__(**arg)
 
-    client = paramiko.SSHClient()
+    client = paramiko.SSHClient()    
     client.load_system_host_keys()
-    
+
     host_key_policy = None
     if arg["no_strict_host_key_checking"] == True:
       host_key_policy = paramiko.client.WarningPolicy
+      logging.warning("DANGER! Strict host key checking is disabled.")
 
     else:
       host_key_policy = paramiko.client.RejectPolicy
 
-    client.set_missing_host_key_policy = host_key_policy
+    client.set_missing_host_key_policy(host_key_policy)
       
     if arg["password"] == None:
       client.connect(hostname=arg["host"], port=arg["port"], username=arg["username"], key_filename=arg["keyfile"])
