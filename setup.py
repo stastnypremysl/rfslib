@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
   long_description = fh.read()
 
   setuptools.setup(name='rfslib',
-    version='0.2.1',
+    version='0.3.0',
     description='Remote file system libraries for data manipulation between remote /and local host/ (cp, mv, ls, rm,..)',
     long_description=long_description,
     author='Přemysl Šťastný',
@@ -15,7 +15,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     install_requires=[
-      'pysmb>=1,<2',
-      'paramiko>=2,<3'
+      'pysmb>=1.2.7,<2',
+      'paramiko>=2.7.2,<3'
     ]
   )
