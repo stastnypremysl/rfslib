@@ -33,6 +33,8 @@ class PGlobber():
       logging.warning("Wildcard {} failed resolution. Returning {}".format(pathname, pathname))
       return [pathname]
     else:
+
+      i_result = ""
       for r in result:
         i_result += "\n" + r
 
