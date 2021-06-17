@@ -2,6 +2,7 @@
 
 import setuptools
 
+
 with open("README.md", "r", encoding="utf-8") as freadme, open("version.txt", "r") as fversion:
   long_description = freadme.read()
   version = fversion.read().splitlines()[0]
@@ -9,6 +10,7 @@ with open("README.md", "r", encoding="utf-8") as freadme, open("version.txt", "r
   setuptools.setup(name='rfslib',
     version=version,
     description='Remote file system libraries for data manipulation between remote /and local host/ (cp, mv, ls, rm,..)',
+    include_package_data=True,
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Přemysl Šťastný',
