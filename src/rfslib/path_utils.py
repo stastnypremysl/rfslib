@@ -154,9 +154,9 @@ def generic_mv(conn, sources, dest):
     for r_file in remote_src_paths:
       if dest_dir:
         r_dirname, r_basename = os.path.split(r_file)
-        conn.rpull(l_file, os.path.join(dest.path, l_basename))
+        conn.rpull(r_file, os.path.join(dest.path, l_basename))
       else:
-        conn.rpull(l_file, dest.path)
+        conn.rpull(r_file, dest.path)
       
       conn.rmtree(r_file)
   
