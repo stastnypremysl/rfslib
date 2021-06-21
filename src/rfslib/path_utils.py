@@ -134,10 +134,18 @@ def generic_mv(conn, sources, dest):
         l_dirname, l_basename = os.path.split(l_file)
 
         conn.rpush(l_file, os.path.join(dest.path, l_basename))
-        shutil.rmtree(l_file)
+        
+        if os.path.isdir(l_file):
+          shutil.rmtree(l_file)
+        else
+          os.unlink(l_file)
       else:
         conn.rpush(l_file, dest.path)
-        shutil.rmtree(l_file)
+
+        if os.path.isdir(l_file):
+          shutil.rmtree(l_file)
+        else
+          os.unlink(l_file)
     
   else:
     dest_dir = os.path.lexists(dest.path) and os.path.isdir(dest.path)
