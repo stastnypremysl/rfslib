@@ -141,7 +141,7 @@ def generic_mv(conn, sources, dest):
     logging.debug("generic_mv: Destination {} is local. It is a folder: {}".format(dest.path, dest_dir))
     
     logging.debug("generic_mv: Dealing with local files. ")
-    for l_file in local_src_path:
+    for l_file in local_src_paths:
       logging.debug("generic_mv, local: Moving {}.".format(l_file) )
 
       if dest_dir:
@@ -151,7 +151,7 @@ def generic_mv(conn, sources, dest):
         shutil.move(l_file, dest.path)
 
     logging.debug("generic_mv: Dealing with remote files. ")
-    for r_file in remote_src_path:
+    for r_file in remote_src_paths:
       if dest_dir:
         r_dirname, r_basename = os.path.split(r_file)
         conn.rpull(l_file, os.path.join(dest.path, l_basename))
