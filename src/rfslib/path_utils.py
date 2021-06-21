@@ -137,14 +137,14 @@ def generic_mv(conn, sources, dest):
         
         if os.path.isdir(l_file):
           shutil.rmtree(l_file)
-        else
+        else:
           os.unlink(l_file)
       else:
         conn.rpush(l_file, dest.path)
 
         if os.path.isdir(l_file):
           shutil.rmtree(l_file)
-        else
+        else:
           os.unlink(l_file)
     
   else:
