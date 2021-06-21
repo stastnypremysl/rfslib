@@ -158,7 +158,7 @@ def generic_mv(conn, sources, dest):
       else:
         conn.rpull(r_file, dest.path)
       
-      conn.rmtree(r_file)
+      conn.rm(r_file, recursive=True)
   
   logging.debug("generic_mv: done")
    
