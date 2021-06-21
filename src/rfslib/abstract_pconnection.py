@@ -12,7 +12,7 @@ from rfslib.path_utils import path_normalize
 
 import random
 
-import logging
+import logging, sys
 
 class PConnection(ABC):
   def __init__(self, **args):
