@@ -185,14 +185,14 @@ class PConnection(ABC):
     self.__check_local_file_not_folder(local_path)
     self.__check_potencial_not_folder(remote_path)
 
-    _tmp_file = tempfile.NamedTemporaryFile()
-    tmp_file = _tmp_file.name
+    with tempfile.NamedTemporaryFile() as _tmp_file:
+      tmp_file = _tmp_file.name
     
-    self.__encode(local_path, tmp_file)
+      self.__encode(local_path, tmp_file)
 
-    tmp_file2 = self.__infolder_tmp_file(remote_path)
-    self._push(tmp_file, tmp_file2)
-    self.fmv(tmp_file2, remote_path)
+      tmp_file2 = self.__infolder_tmp_file(remote_path)
+      self._push(tmp_file, tmp_file2)
+      self.fmv(tmp_file2, remote_path)
 
     logging.debug("Pushing local file {} to the remote file {} is completed.".format(local_path, remote_path))
 
@@ -234,15 +234,15 @@ class PConnection(ABC):
     self.__check_not_folder(remote_path)
     self.__check_local_potencial_file_not_folder(local_path)
 
-    _tmp_file = tempfile.NamedTemporaryFile()
-    tmp_file = _tmp_file.name
+    with tempfile.NamedTemporaryFile() as _tmp_file:
+      tmp_file = _tmp_file.name
        
-    self._pull(remote_path, tmp_file)
+      self._pull(remote_path, tmp_file)
 
-    tmp_file2 = self.__infolder_tmp_file(local_path)
-    self.__decode(tmp_file, tmp_file2)
+      tmp_file2 = self.__infolder_tmp_file(local_path)
+      self.__decode(tmp_file, tmp_file2)
 
-    shutil.move(tmp_file2, local_path)
+      shutil.move(tmp_file2, local_path)
 
     logging.debug("Pulling remote file {} to the local file {} is completed.".format(remote_path, local_path))
 
@@ -437,13 +437,13 @@ class PConnection(ABC):
     self.__check_not_folder(old_name)
     self.__check_potencial_not_folder(old_name)
     
-    _tmp_file = tempfile.NamedTemporaryFile()
-    tmp_file = _tmp_file.name
-    self.pull(old_name, tmp_file)
+    with tempfile.NamedTemporaryFile() as _tmp_file:
+      tmp_file = _tmp_file.name
+      self.pull(old_name, tmp_file)
     
-    if self.exists(new_name):
-      self.rm(new_name)
-    self.push(tmp_file, new_name)
+      if self.exists(new_name):
+        self.rm(new_name)
+      self.push(tmp_file, new_name)
 
     logging.debug("Copying remote non-directory file {} to a remote non-directory file {} is completed.".format(old_name, new_name))
 
@@ -579,9 +579,9 @@ class PConnection(ABC):
       return [remote_path]
 
   def touch(self, remote_path):
-    _tmp_file = tempfile.NamedTemporaryFile()
-    tmp_file = _tmp_file.name
-    self.push(tmp_file, remote_path)    
+    with tempfile.NamedTemporaryFile() as _tmp_file:
+      tmp_file = _tmp_file.name
+      self.push(tmp_file, remote_path)    
   
   def __enter__(self):
       return self
