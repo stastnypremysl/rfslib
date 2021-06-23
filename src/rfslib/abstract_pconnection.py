@@ -144,7 +144,7 @@ class PConnection(ABC):
   def __encode(self, from_lpath, to_lpath):
     if self.__text_transmission:
 
-      with open(from_lpath, 'rb') as inp, open(to_lpath, 'wbx') as out:
+      with open(from_lpath, 'rb') as inp, open(to_lpath, 'wb') as out:
         inp = inp.read()
         decoded = codecs.decode(binp, encoding="utf8")
 
@@ -159,7 +159,7 @@ class PConnection(ABC):
 
   def __decode(self, from_lpath, to_lpath):
     if self.__text_transmission:
-      with open(from_lpath, 'rb') as inp, open(to_lpath, 'wbx') as out:
+      with open(from_lpath, 'rb') as inp, open(to_lpath, 'wb') as out:
         binp = inp.read()
         decoded = codecs.decode(binp, encoding=self.__remote_encoding)
 

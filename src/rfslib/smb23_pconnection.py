@@ -43,13 +43,13 @@ class Smb23PConnection(abstract_pconnection.PConnection):
   def _push(self, local_path, remote_path):
     p_remote_path = self.__prefix_path(remote_path)
 
-    with open(local_path, "rb") as local_file, smb.open_file(p_remote_path, "wbx") as remote_file:
+    with open(local_path, "rb") as local_file, smb.open_file(p_remote_path, "wb") as remote_file:
       shutil.copyfileobj(local_file, remote_file)
 
   def _pull(self, remote_path, local_path):
     p_remote_path = self.__prefix_path(remote_path)
 
-    with smb.open_file(p_remote_path, "rb") as remote_file, open(local_path, "wbx") as local_file:
+    with smb.open_file(p_remote_path, "rb") as remote_file, open(local_path, "wb") as local_file:
       shutil.copyfileobj(remote_file, local_file)
   
   def _isdir(self, remote_path):

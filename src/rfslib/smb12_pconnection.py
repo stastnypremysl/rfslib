@@ -30,7 +30,7 @@ class Smb12PConnection(abstract_pconnection.PConnection):
       self.__smb.storeFile(self.__service_name, remote_path, local_file)
 
   def _pull(self, remote_path, local_path):
-    with open(local_path, "wbx") as local_file:
+    with open(local_path, "wb") as local_file:
       self.__smb.retrieveFile(self.__service_name, remote_path, local_file)
   
   def _isdir(self, remote_path):
