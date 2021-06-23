@@ -1,4 +1,4 @@
-import smbprotocol as smb
+import smbclient as smb
 
 from rfslib import abstract_pconnection
 import socket
