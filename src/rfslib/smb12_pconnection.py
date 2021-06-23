@@ -35,7 +35,7 @@ class Smb12PConnection(abstract_pconnection.PConnection):
   
   def _isdir(self, remote_path):
     attr = self.__smb.getAttributes(self.__service_name, remote_path)
-    return attr.isDirectory()
+    return attr.isDirectory
   
   def _mkdir(self, remote_path):
     self.__smb.createDirectory(self.__service_name, remote_path)
