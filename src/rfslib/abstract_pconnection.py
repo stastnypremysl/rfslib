@@ -151,7 +151,7 @@ class PConnection(ABC):
         if self.__remote_crlf:
           decoded = decoded.replace('\n', '\r\n')
         
-        bout = codecs.encode(decoded, encoding=__remote_encoding)
+        bout = codecs.encode(decoded, encoding=self.__remote_encoding)
         out.write(bout)
 
     else:
