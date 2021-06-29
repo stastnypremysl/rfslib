@@ -47,6 +47,7 @@ build:
     paths:
       - dist/*.whl
       - dist/*.tar.gz
+    expire_in: 4 weeks
 
 deploy:
   stage: deploy
