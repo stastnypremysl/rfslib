@@ -146,7 +146,7 @@ class PConnection(ABC):
 
       with open(from_lpath, 'rb') as inp, open(to_lpath, 'wb') as out:
         inp = inp.read()
-        decoded = codecs.decode(binp, encoding="utf8")
+        decoded = codecs.decode(inp, encoding="utf8")
 
         if self.__remote_crlf:
           decoded = decoded.replace('\n', '\r\n')
