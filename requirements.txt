@@ -1,0 +1,7 @@
+pyparsing
+paramiko
+pysmb
+Sphinx
+sphinxcontrib-napoleon
+twine
+sphinx-markdown-builder
