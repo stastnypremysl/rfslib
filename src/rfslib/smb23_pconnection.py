@@ -25,10 +25,10 @@ class Smb23PConnection(abstract_pconnection.PConnection):
 
 
   def close(self):
-    self.__smb.close()
+    pass
 
   def __prefix_path(self, path):
-    return '\\\\' + self.__host + '\\' + self.__service_name + '\\' + self.path
+    return '\\\\' + self.__host + '\\' + self.__service_name + '\\' + path
 
   def _listdir(self, remote_path):
     p_remote_path = self.__prefix_path(remote_path)
