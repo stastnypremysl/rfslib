@@ -5,8 +5,9 @@ from os.path import split
 
 class FtpPConnection(abstract_pconnection.PConnection):
   def __init__(self, **arg):
-    super().__init__(**arg, tls=False)
-    if tls:
+    super().__init__(**arg)
+
+    if arg[tls]:
       self.__ftp = ftplib.FTP_TLS(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"])
     else:
       self.__ftp = ftplib.FTP(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"])
