@@ -1,5 +1,5 @@
 from rfslib import abstract_pconnection
-from ftplib import FTP
+import ftplib
 
 from os.path import split
 
