@@ -8,12 +8,12 @@ class FtpPConnection(abstract_pconnection.PConnection):
     super().__init__(**arg)
 
     if arg['tls']:
-      self.__ftp = ftplib.FTP_TLS(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"])
+      self.__ftp = ftplib.FTP_TLS(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"], encoding='utf-8')
     else:
-      self.__ftp = ftplib.FTP(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"])
+      self.__ftp = ftplib.FTP(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"], encoding='utf-8')
 
   def close(self):
-    self.__ftp.close()
+    self.__ftp.quit()
   
   def _listdir(self, remote_path):
     return self.__ftp.dir(remote_path)
