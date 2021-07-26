@@ -8,9 +8,12 @@ class FtpPConnection(abstract_pconnection.PConnection):
     super().__init__(**arg)
 
     if arg['tls']:
-      self.__ftp = ftplib.FTP_TLS(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"], encoding='utf-8')
+      self.__ftp = ftplib.FTP_TLS(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"])
     else:
-      self.__ftp = ftplib.FTP(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"], encoding='utf-8')
+      self.__ftp = ftplib.FTP(source_address=(arg["host"], arg["port"]), user=arg["username"], passwd=arg["password"])
+
+    self.__ftp.encoding='utf-8'
+    self.__ftp.sendcmd('OPTS UTF8 ON')
 
   def close(self):
     self.__ftp.quit()
