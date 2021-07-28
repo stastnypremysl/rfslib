@@ -19,7 +19,11 @@ class FtpPConnection(abstract_pconnection.PConnection):
     self.__ftp.quit()
   
   def _listdir(self, remote_path):
-    return self.__ftp.dir(remote_path)
+    ret = []
+    for path, _ in self.__ftp.mlsd(remote_path):
+      ret.append(path)
+
+    return ret
 
   def _rename(self, old_name, new_name):
     self.__ftp.rename(old_name, new_name) 
