@@ -21,6 +21,7 @@ with open("README.md", "r", encoding="utf-8") as freadme, open("version.txt", "r
     install_requires=[
       'pysmb>=1.2.7,<2',
       'paramiko>=2.7.2,<3',
-      'smbprotocol>=1.5.1,<2'
+      'smbprotocol>=1.5.1,<2',
+      'ftputil>=5.0.1,<6'
     ]
   )

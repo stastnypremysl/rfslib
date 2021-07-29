@@ -1,5 +1,6 @@
 from rfslib import abstract_pconnection
 import ftplib
+import ftputil
 
 from os.path import split
 
@@ -8,52 +9,49 @@ class FtpPConnection(abstract_pconnection.PConnection):
     super().__init__(**arg)
 
     if arg['tls']:
-      self.__ftp = ftplib.FTP_TLS()
+      factory_b_class = ftplib.FTP_TLS
     else:
-      self.__ftp = ftplib.FTP()
+      factory_b_class = ftplib.FTP
 
-    self.__ftp.connect(host=arg["host"], port=arg["port"])
-    self.__ftp.login(user=arg["username"], passwd=arg["password"])
+    session_factory = ftputil.session.session_factory(
+      base_class = factory_b_class,
+      port = arg['port'],
+      encrypt_data_channel = arg['tls'],
+      encoding = 'UTF-8',
+      passive_mode = arg['passive_mode'])
+
+    self.__ftp = ftputil.FTPHost(arg['host'], arg['username'], arg['password'], session_factory=session_factory)
+
 
   def close(self):
-    self.__ftp.quit()
+    self.__ftp.close()
   
   def _listdir(self, remote_path):
-    ret = []
-    for path, _ in self.__ftp.mlsd(remote_path):
-      ret.append(path)
-
-    return ret
+    return self.__ftp.listdir(remote_path)
 
   def _rename(self, old_name, new_name):
     self.__ftp.rename(old_name, new_name) 
 
   def _push(self, local_path, remote_path):
-    local_file = open(local_path, "rb")
-    self.__ftp.storbinary("STOR " + remote_path, local_file)
+    self.__ftp.upload(local_path, remote_path)
 
   def _pull(self, remote_path, local_path):
-    local_file = open(local_path, "wbx")
-    self.__ftp.retrbinary("RETR " + remote_path, local_file)
+    self.__ftp.download(remote_path, local_path)
   
   def _isdir(self, remote_path):
-    dirname, basename = split(remote_path)
-    m = dict(self.__ftp.mlsd(remote_path, facts["type"]))
-    
-    return m[basename]['type'] == 'dir'
+    return self.__ftp.isdir(remote_path)
   
   def _mkdir(self, remote_path):
-    self.__ftp.mkd(remote_path)
+    self.__ftp.mkdir(remote_path)
 
   def _rmdir(self, remote_path):
-    self.__ftp.rmd(remote_path)
+    self.__ftp.rmdir(remote_path)
 
   def _unlink(self, remote_path):
-    self.__ftp.delete(remote_path)
+    self.__ftp.unlink(remote_path)
 
   def _exists(self, remote_path):
-    dirname, basename = split(remote_path)
-    return basename in self._listdir(dirname)
+    self.__ftp.exists(remote_path0
   
   def _lexists(self, remote_path):
      return self._exists(remote_path)

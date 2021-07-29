@@ -5,3 +5,4 @@ Sphinx
 sphinxcontrib-napoleon
 twine
 sphinx-markdown-builder
+ftputil
