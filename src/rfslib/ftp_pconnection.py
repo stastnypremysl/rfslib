@@ -39,7 +39,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
     self.__ftp.download(remote_path, local_path)
   
   def _isdir(self, remote_path):
-    return self.__ftp.isdir(remote_path)
+    return self.__ftp.path.isdir(remote_path)
   
   def _mkdir(self, remote_path):
     self.__ftp.mkdir(remote_path)
@@ -51,7 +51,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
     self.__ftp.unlink(remote_path)
 
   def _exists(self, remote_path):
-    self.__ftp.exists(remote_path)
+    self.__ftp.path.exists(remote_path)
   
   def _lexists(self, remote_path):
      return self._exists(remote_path)
