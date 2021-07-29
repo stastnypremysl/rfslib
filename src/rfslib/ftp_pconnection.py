@@ -18,7 +18,8 @@ class FtpPConnection(abstract_pconnection.PConnection):
       port = arg['port'],
       encrypt_data_channel = arg['tls'],
       encoding = 'UTF-8',
-      use_passive_mode = arg['passive_mode'])
+      use_passive_mode = arg['passive_mode'],
+      debug_level=1)
 
     self.__ftp = ftputil.FTPHost(arg['host'], arg['username'], arg['password'], session_factory=session_factory)
 
