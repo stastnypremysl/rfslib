@@ -51,7 +51,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
     self.__ftp.unlink(remote_path)
 
   def _exists(self, remote_path):
-    self.__ftp.exists(remote_path0
+    self.__ftp.exists(remote_path)
   
   def _lexists(self, remote_path):
      return self._exists(remote_path)
