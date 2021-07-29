@@ -22,6 +22,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
       debug_level=2)
 
     self.__ftp = ftputil.FTPHost(arg['host'], arg['username'], arg['password'], session_factory=session_factory)
+    self.__ftp.use_list_a_option = True
 
 
   def close(self):
