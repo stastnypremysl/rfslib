@@ -173,7 +173,6 @@ deploy-doc:
       popd
 
       ./docs/generate-docs.sh
-      cp -r docs/_build/commands $doc_repo
       cp docs/_build/latex/rfslib.pdf $doc_repo/rfslib-dev-doc.pdf
       cp docs/_build/README.md $doc_repo
 
