@@ -138,6 +138,66 @@ deploy:
     - pip install twine
     - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://git.profinit.eu/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
 
+backup-dependencies:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - mkdir dependencies
+    - | 
+      apt install -y pandoc ghc rustc
+      pip download -d ./dependencies -r requirements.txt --no-binary :all:
+  artifacts:
+    paths:
+      - dependencies
+    expire_in: never
+
+deploy-doc:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_DOCS_ACCESS_TOKEN
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - |
+      apt install -y texlive-latex-recommended latexmk texlive-fonts-recommended texlive-latex-extra
+
+      export doc_repo=/tmp/rfslib-docs
+
+      pushd /tmp
+      git clone https://oauth2:${CI_DOCS_ACCESS_TOKEN}@git.profinit.eu/rfs/rfslib-docs/
+      popd
+
+      pushd $doc_repo
+      rm -fr ./commands ./rfslib-dev-doc.pdf 2>/dev/null || :
+      popd
+
+      ./docs/generate-docs.sh
+      cp -r docs/_build/commands $doc_repo
+      cp docs/_build/latex/rfslib.pdf $doc_repo/rfslib-dev-doc.pdf
+      cp docs/_build/README.md $doc_repo
+
+      cd $doc_repo
+      
+      git config --global user.email "$GITLAB_USER_EMAIL"
+      git config --global user.name "$GITLAB_USER_NAME"
+
+      git add -A
+      git commit -m "$CI_COMMIT_MESSAGE" || :
+
+      [ -n "$CI_COMMIT_TAG" ] && git tag "$CI_COMMIT_TAG"
+
+      git push
+      git push --tags
+
+  artifacts:
+    paths:
+      - /builds/rfs/rfslib/doc
+    expire_in: 4 weeks
+
+
+
+
 # pages:
  # stage: build
  # script:
