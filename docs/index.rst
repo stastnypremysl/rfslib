@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to rfstools's developer documentation!
+Welcome to rfslib's developer documentation!
 ==============================================
 
-This is developer documentation of rfstools. For user documentation, use please README.md in base repository.
+This is a documentation of rfslib.
 
 To create a new development enviroment, it is recommended to create python virtual enviroment and install dependencies in requirements.txt
 
@@ -19,21 +19,59 @@ If you want to create a new pdf documentation, you are required to install also 
 
 
 
-\_rfstools.arg\_parser module
------------------------------
+\rfslib.abstract\_pconnection module
+------------------------------------
 
-.. automodule:: _rfstools.arg_parser
+.. automodule:: rfslib.abstract_pconnection
    :members:
    :undoc-members:
    :show-inheritance:
 
-\_rfstools.arg\_processor module
+
+\rfslib.sftp\_pconnection module
 --------------------------------
 
-.. automodule:: _rfstools.arg_processor
+.. automodule:: rfslib.sftp_pconnection
    :members:
    :undoc-members:
    :show-inheritance:
 
+\rfslib.ftp\_pconnection module
+-------------------------------
 
+.. automodule:: rfslib.ftp_pconnection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+\rfslib.smb12\_pconnection module
+---------------------------------
+
+.. automodule:: rfslib.smb12_pconnection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+\rfslib.smb23\_pconnection module
+---------------------------------
+
+.. automodule:: rfslib.smb23_pconnection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+\rfslib.fs\_pconnection module
+---------------------------------
+
+.. automodule:: rfslib.fs_pconnection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+\rfslib.path\_utils module
+---------------------------------
+.. automodule:: rfslib.path_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
 

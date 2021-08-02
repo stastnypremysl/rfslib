@@ -23,7 +23,7 @@ with open("../version.txt", "r") as fversion:
   release = fversion.read().splitlines()[0]
   
 
-project = 'rfstools'
+project = 'rfslib'
 copyright = '2021, Profinit'
 author = 'Přemysl Šťastný'
 
@@ -36,6 +36,7 @@ author = 'Přemysl Šťastný'
 # ones.
 extensions = [ 'sphinx_markdown_builder',
 'sphinx.ext.napoleon',
+'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
