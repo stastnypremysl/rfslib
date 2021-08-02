@@ -21,6 +21,95 @@ default:
 
     - mkdir -p ~/.pip
 
+test-fs:
+  stage: test
+  script:
+    - pip install .
+
+    - export RFSTOOLS_CONNECTION_TYPE=FS
+ #   - ./tests/generic-tests
+
+test-sftp:
+  stage: test
+  script:
+    - pip install .
+
+    - apt install -y openssh-server
+    - ssh-keygen -f ~/.ssh/id_rsa -N ''
+    - cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+    - chmod og-wx ~/.ssh/authorized_keys
+
+    - mkdir -p /run/sshd
+    - /usr/sbin/sshd
+    - export RFSTOOLS_CONNECTION_TYPE=SFTP
+    - export RFSTOOLS_HOST=localhost
+    - export RFSTOOLS_USERNAME=root
+    - export RFSTOOLS_NO_HOST_KEY_CHECKING=TRUE
+
+#    - ./tests/generic-tests
+
+  
+test-smb12:
+  stage: test
+  script:
+    - pip install .
+
+    - apt install -y samba
+    - mkdir -p /samba/tmp
+    - chmod 1777 /samba/tmp
+    - cat < $TEST_SMB_CONFIG > /etc/samba/smb.conf
+    - testparm /etc/samba/smb.conf
+    - smbd -D
+    - nmbd -D
+    - sleep 10
+    
+    - smbstatus
+
+    - export RFSTOOLS_CONNECTION_TYPE=SMB12
+    - export RFSTOOLS_HOST=127.0.0.1
+    - export RFSTOOLS_USERNAME=testing
+    - export RFSTOOLS_PASSWORD=testing
+    - export RFSTOOLS_PORT=445
+    - export RFSTOOLS_SERVICE_NAME=share
+    - export RFSTOOLS_USE_DIRECT_TCP=true
+
+#    - ./tests/generic-tests
+
+
+test-smb23:
+  stage: test
+  script:
+    - pip install .
+
+    - apt install -y samba
+    - mkdir -p /samba/tmp
+    - chmod 1777 /samba/tmp
+    - cat < $TEST_SMB_CONFIG > /etc/samba/smb.conf
+    - testparm /etc/samba/smb.conf
+    - smbd -D
+    - nmbd -D
+    - sleep 10
+    
+    - smbstatus
+    
+    - | 
+      smbpasswd -a root -s <<EOF
+      testing
+      testing
+      EOF
+
+    - export RFSTOOLS_CONNECTION_TYPE=SMB23
+    - export RFSTOOLS_HOST=127.0.0.1
+    - export RFSTOOLS_USERNAME=root
+    - export RFSTOOLS_PASSWORD=testing
+    - export RFSTOOLS_SERVICE_NAME=share
+    - export RFSTOOLS_DISABLE_SECURE_NEGOTIATE=True
+    - export RFSTOOLS_DEBUG=False
+    - export RFSTOOLS_VERBOSE=True
+
+#    - ./tests/generic-tests
+
+
 # test:
 #  script:
 #    - python setup.py test
