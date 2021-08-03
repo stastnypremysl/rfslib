@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 #import pysmb
 
@@ -16,6 +17,10 @@ import logging, sys
 
 class PConnection(ABC):
   def __init__(self, **args):
+    """TODO
+
+    :meta public:
+    """
     if 'text_transmission' in args:
       self.__text_transmission = args['text_transmission']
     else:
@@ -33,17 +38,19 @@ class PConnection(ABC):
 
   @abstractmethod
   def close(self):
+    """Method to close the opened connection."""
     pass
 
   @abstractmethod
-  def _listdir(self, remote_path:str) -> [str]: 
-    """Protected method which returns a list of files in the folder.
+  def _listdir(self, remote_path:str) -> List[str]: 
+    """Protected method which returns a list of files in the folder including hidden files.
+    Undefined if the remote file doesn't exist or isn't a folder.
 
     Args:
       remote_path: The remote path of a remote folder.
 
     Returns:
-      List of files ([str]) in the remote folder
+      List of files in the remote folder
       
     :meta public: 
     """
@@ -51,7 +58,7 @@ class PConnection(ABC):
 
   @abstractmethod
   def _rename(self, old_name:str, new_name:str):
-    """Protected method which renames/moves a file.
+    """Protected method which renames/moves a file. Behavior is undefined, if `new_name` file exists or `old_name` file doesn't exist.
 
     Args:
       old_name: Remote path a file to move.
@@ -64,7 +71,7 @@ class PConnection(ABC):
 
   @abstractmethod
   def _push(self, local_path:str, remote_path:str):
-    """Protected method which uploads/pushes a file from a local storage to a remote storage in the binary form.
+    """Protected method which uploads/pushes a file from a local storage to a remote storage in the binary form. Behavior is undefined if destination folder doesn't exist or remote file already exists.
 
     Args:
       local_path: Path of a local file to upload.
@@ -76,11 +83,11 @@ class PConnection(ABC):
 
   @abstractmethod
   def _pull(self, remote_path:str, local_path:str):
-    """Protected method which downloads/pulls a file from a remote storage to a local storage in the binary form.
+    """Protected method which downloads/pulls a file from a remote storage to a local storage in the binary form. Behavior is undefined if destination folder doesn't exist.
 
     Args:
       remote_path: Path of a remote file to download.
-      local_path: Path of a local file, where to download/pull a remote file.
+      local_path: Path of a local file, where to download/pull a remote file or local file already exists.
       
     :meta public: 
     """
@@ -91,10 +98,10 @@ class PConnection(ABC):
     """Protected method which checks, whether a remote file is a directory.
 
     Args:
-      remote_path: Path of a directory.
+      remote_path: A path of a directory.
 
     Returns:
-      True, if remote file is folder. False, if it isn't a folder. Undefined if the file doesns't exist.
+      True, if remote file is folder. False, if it isn't a folder. Undefined if the file doesn't exist.
 
     :meta public: 
     """
@@ -102,26 +109,84 @@ class PConnection(ABC):
     pass
   
   @abstractmethod
-  def _mkdir(self, remote_path):
+  def _mkdir(self, remote_path:str):
+    """Protected method which creates a new directory. Behavior is undefined if remote folder already exist, or destination folder doesn't exist.
+
+    Args:
+      remote_path: A path of a new remote directory.
+
+    :meta public: 
+    """
     pass
 
   @abstractmethod
-  def _rmdir(self, remote_path):
+  def _rmdir(self, remote_path:str):
+    """Protected method which removes an empty remote directory. Behavior is undefined if remote directory doesn't exist or it isn't empty.
+
+    Args:
+      remote_path: Path of an empty remote directory to delete.
+
+    :meta public: 
+    """   
     pass
 
   @abstractmethod
-  def _unlink(self, remote_path):
+  def _unlink(self, remote_path:str):
+    """Protected method which removes a nondirectory file. Behavior is undefined if remote file doesn't exist or is a directory.
+
+    Args:
+      remote_path: Path of a remote regular file to delete.
+
+    :meta public: 
+    """
     pass
 
   @abstractmethod
-  def _exists(self, remote_path):
+  def _exists(self, remote_path:str) -> bool:
+    """Protected method which checks, whether a remote file exist.
+    
+    KNOWN BUG: Behavior is undefined in case of broken symlinks. 
+
+    Args:
+      remote_path: Path of a remote file.
+
+    Returns:
+      True, if remote file is exist. False, if remote file doesn't exist
+
+    :meta public: 
+    """
     pass
 
   @abstractmethod
-  def _lexists(self, remote_path):
+  def _lexists(self, remote_path:str) -> bool:
+    """Protected method which checks, whether a remote file exist.
+    
+    KNOWN BUG: Behavior is undefined in case of broken symlinks. 
+
+    Args:
+      remote_path: Path of a remote file.
+
+    Returns:
+      True, if remote file is exist. False, if remote file doesn't exist
+
+    :meta public: 
+    """
+ 
     pass
 
-  def exists(self, remote_path):
+  def exists(self, remote_path:str) -> bool:
+    """Method which checks, whether a remote file exist.
+    
+    KNOWN BUG: Behavior is undefined in case of broken symlinks. 
+
+    Args:
+      remote_path: Path of a remote file.
+
+    Returns:
+      True, if remote file is exist. False, if remote file doesn't exist
+
+    """
+
     logging.debug("Does remote file {} exist?".format(remote_path))
 
     remote_path = path_normalize(remote_path)
@@ -131,6 +196,17 @@ class PConnection(ABC):
     return ret
 
   def lexists(self, remote_path):
+    """Method which checks, whether a remote file exist.
+    
+    KNOWN BUG: Behavior is undefined in case of broken symlinks. 
+
+    Args:
+      remote_path: Path of a remote file.
+
+    Returns:
+      True, if remote file is exist. False, if remote file doesn't exist
+
+    """
     logging.debug("Does remote file {} lexist?".format(remote_path))
 
     remote_path = path_normalize(remote_path)
