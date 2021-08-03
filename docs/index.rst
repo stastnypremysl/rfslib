@@ -26,6 +26,7 @@ If you want to create a new pdf documentation, you are required to install also 
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:
 
 
 \rfslib.sftp\_pconnection module
@@ -35,6 +36,7 @@ If you want to create a new pdf documentation, you are required to install also 
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:
 
 \rfslib.ftp\_pconnection module
 -------------------------------
@@ -43,6 +45,7 @@ If you want to create a new pdf documentation, you are required to install also 
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:
 
 \rfslib.smb12\_pconnection module
 ---------------------------------
@@ -51,6 +54,7 @@ If you want to create a new pdf documentation, you are required to install also 
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:
 
 \rfslib.smb23\_pconnection module
 ---------------------------------
@@ -59,6 +63,7 @@ If you want to create a new pdf documentation, you are required to install also 
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:
 
 \rfslib.fs\_pconnection module
 ---------------------------------
@@ -67,6 +72,7 @@ If you want to create a new pdf documentation, you are required to install also 
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:
 
 \rfslib.path\_utils module
 ---------------------------------

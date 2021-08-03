@@ -36,23 +36,58 @@ class PConnection(ABC):
     pass
 
   @abstractmethod
-  def _listdir(self, remote_path): 
+  def _listdir(self, remote_path:str) -> [str]: 
+    """Protected method which returns a list of files in the folder.
+
+    Args:
+      remote_path: The remote path of a remote folder.
+
+    Returns:
+      List of files in the remote folder
+      
+    :meta public: 
+    """
     pass
 
   @abstractmethod
-  def _rename(self, old_name, new_name):
+  def _rename(self, old_name:str, new_name:str):
+    """Protected method which renames/moves a file.
+
+    Args:
+      old_name: Remote path a file to move.
+      new_name: Remote path to which move the file.
+      
+    :meta public: 
+    """
+
     pass
 
   @abstractmethod
-  def _push(self, local_path, remote_path):
+  def _push(self, local_path:str, remote_path:str):
+    """Protected method which uploads/pushes a file from a local storage to a remote storage in the binary form.
+
+    Args:
+      local_path: Path of a local file to upload.
+      remote_path: Path on the remote storage, where to upload/push a local file.
+      
+    :meta public: 
+    """
     pass
 
   @abstractmethod
-  def _pull(self, remote_path, local_path):
+  def _pull(self, remote_path:str, local_path:str):
+    """Protected method which downloads/pulls a file from a remote storage to a local storage in the binary form.
+
+    Args:
+      remote_path: Path of a remote file to download.
+      local_path: Path of a local file, where to download/pull a remote file.
+      
+    :meta public: 
+    """
     pass
   
   @abstractmethod
-  def _isdir(self, remote_path):
+  def _isdir(self, remote_path:str) -> bool:
     pass
   
   @abstractmethod
