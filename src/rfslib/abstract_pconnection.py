@@ -43,7 +43,7 @@ class PConnection(ABC):
       remote_path: The remote path of a remote folder.
 
     Returns:
-      List of files in the remote folder
+      List of files ([str]) in the remote folder
       
     :meta public: 
     """
@@ -88,6 +88,17 @@ class PConnection(ABC):
   
   @abstractmethod
   def _isdir(self, remote_path:str) -> bool:
+    """Protected method which checks, whether a remote file is a directory.
+
+    Args:
+      remote_path: Path of a directory.
+
+    Returns:
+      True, if remote file is folder. False, if it isn't a folder. Undefined if the file doesns't exist.
+
+    :meta public: 
+    """
+
     pass
   
   @abstractmethod
