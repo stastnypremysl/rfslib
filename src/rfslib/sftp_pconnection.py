@@ -5,13 +5,26 @@ from stat import S_ISDIR
 import logging
 
 class SftpPConnection(abstract_pconnection.PConnection):
-  def __init__(self, **arg):
-    super().__init__(**arg)
+  '''Class for SFTP connection. Public interface with an exception of __init__ and close is inherited from PConnection.'''
+
+  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, username: str, password: str = None, key_filename : str = '~/.ssh/id_rsa', port: int = 22, no_host_key_checking: bool = False):
+    '''The constructor of SftpPConnection. Opens SFTP connection, when called. If None password is specified, the key authentication will be used. Otherwise the password authentication will be used.
+    
+    Args:
+      settings: The settings for the super class PConnection.
+      host: Remote address of the server.
+      port: Port for the SFTP connection.
+      username: Remote username
+      password: Password for a SFTP connection. If None is provided, key authentication will be used.
+      key_filename: A path to key.
+      no_host_key_checking: Specifies, whether remote host key should be verified or not.
+    '''
+    super().__init__(settings)
 
     client = paramiko.SSHClient()    
 
     host_key_policy = None
-    if arg["no_host_key_checking"] == True:
+    if no_host_key_checking == True:
       logging.warning("DANGER! Strict host key checking is disabled.")
 
       # This policy just ignore everything
@@ -24,9 +37,9 @@ class SftpPConnection(abstract_pconnection.PConnection):
     client.set_missing_host_key_policy(host_key_policy)
       
     if arg["password"] == None:
-      client.connect(hostname=arg["host"], port=arg["port"], username=arg["username"], key_filename=arg["keyfile"])
+      client.connect(hostname=host, port=port, username=username, key_filename=key_filename)
     else:
-      client.connect(hostname=arg["host"], port=arg["port"], username=arg["username"], password=arg["password"])
+      client.connect(hostname=host, port=port, username=username, password=password)
 
     self.__sftp = client.open_sftp()
 
@@ -76,5 +89,11 @@ class SftpPConnection(abstract_pconnection.PConnection):
     except IOError:
       return False
     return True
+
+  def _stat(self, remote_path):
+    return self.__sftp.stat(remote_path)
+
+  def _lstat(self, remote_path):
+    return self.__sftp.lstat(remote_path)
 
 

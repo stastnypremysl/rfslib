@@ -3,7 +3,14 @@ from rfslib import abstract_pconnection
 import os, sys, shutil
 
 class FsPConnection(abstract_pconnection.PConnection):
-  def __init__(self, **arg):
+  '''Class for operating with local filesystem. Public interface with an exception of __init__ and close is inherited from PConnection.'''
+
+  def __init__(self, settings: abstract_pconnection.p_connection_settings):
+    '''The constructor of FsPConnection.
+    
+    Args:
+      settings: The settings for super class PConnection.
+    '''
     super().__init__(**arg)
 
   def close(self):
@@ -38,5 +45,11 @@ class FsPConnection(abstract_pconnection.PConnection):
   
   def _lexists(self, remote_path):
     return os.path.lexists(remote_path)
+  
+  def _stat(self, remote_path):
+    return os.stat(remote_path)
+
+  def _lstat(self, remote_path):
+    return os.lstat(remote_path)
 
 

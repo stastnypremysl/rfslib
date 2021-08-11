@@ -15,30 +15,120 @@ import random
 
 import logging, sys
 
+class p_connection_settings():
+  '''This object represents settings appliable for all PConnection instances (instances of class, which inherits from PConnection).'''
+  def __init__():
+    '''The constructor inicializes the class to default values.'''
+    pass
+  
+  text_transmission:bool = False
+  '''If true, all files, which will be transmitted, will be recoded from local_encoding to remote_encoding and from local_crlf to remote_crlf. If False, there will be no encoding done during transmission.'''
+
+  local_encoding:str = 'UTF8'
+  '''The encoding of local text files. (eg. 'UTF8')'''
+  remote_encoding:str = 'UTF8'
+  '''The encoding of remote text files. (eg. 'cp1250')'''
+
+  local_crlf:bool = False
+  '''Does local files use CRLF? If True, it is supposed, they do. If False, it is supposed, they use LF.'''
+  remote_crlf:bool = False
+  '''Does remote files use CRLF? If True, it is supposed, they do. If False, it is supposed, they use LF.'''
+
+  direct_write:bool = False
+  '''NOT IMPLEMENTED YET. If True, cp will write output directly to file. If False all cp operations on regular files will create firstly tmp file in target folder and then move result to file.'''
+
+  skip_validation:bool = False
+  '''NOT IMPLEMENTED YED. If True, all validations of input will be skipped. Undefined behavior may happen if input is wrong. Increses performance.'''
+
+
 class PConnection(ABC):
-  def __init__(self, **args):
-    """TODO
+  def set_settings(self, settings: p_connection_settings):
+    '''The procedure sets all generic settings for PConnection.
+
+    Args:
+      settings: A p_connection_settings object with all generic settings for PConnection.
+    '''
+
+    self.__text_transmission = settings.text_transmission
+
+    self.__local_encoding = settings.local_encoding
+    self.__remote_encoding = settings.remote_encoding
+
+    self.__local_crlf = settings.local_crlf
+    self.__remote_crlf = settings.remote_crlf
+
+    self.__direct_write = settings.direct_write
+
+    self.__skip_validation = settings.skip_validation
+
+  def get_settings(self) -> p_connection_settings:
+    '''The procedure sets all generic settings for PConnection.
+
+    Returns:
+      A p_connection_settings object with all generic settings of PConnection.
+    '''
+    ret = p_connection_settings()
+
+    ret.text_transmission = self.__text_transmission
+
+    ret.local_encoding = self.__local_encoding
+    ret.remote_encoding = self.__remote_encoding
+
+    ret.local_crlf = self.__local_crlf
+    ret.remote_crlf = self.__remote_crlf
+
+    ret.direct_write = self.__direct_write
+
+    ret.skip_validation = self.__skip_validation
+
+    return ret
+ 
+  def __init__(self, settings: p_connection_settings):
+    """The constructor of a abstract class. If it is not called from child class, the behavior is undefined.
+
+    If local_encoding and remote_encoding have same values, no recoding is done. Analogically if local_crlf and remote_crlf is same, no substitution between LF and CRLF is done.
+
+    Args:
+      settings: A p_connection_settings object with all generic settings for PConnection.
 
     :meta public:
     """
-    if 'text_transmission' in args:
-      self.__text_transmission = args['text_transmission']
-    else:
-      self.__text_transmission = False
 
-    if 'remote_encoding' in args:
-      self.__remote_encoding = args['remote_encoding']
-    else:
-      self.__remote_encoding = "UTF8"
-
-    if 'remote_crlf' in args:
-      self.__remote_crlf = args['remote_crlf']
-    else:
-      self.__remote_crlf = False
+    self.set_settings(settings)
+    
 
   @abstractmethod
   def close(self):
     """Method to close the opened connection."""
+    pass
+
+  @abstractmethod
+  def _stat(self, remote_path: str) -> os.stat_result:
+    """Protected method which returns statistics of a file (eg. size, last date modified,...) Follows symlinks to a destination file.
+    Undefined behavior if remote file doesn't exist or it is a broken symlink.
+    
+    Args:
+      remote_path: Path of a remote file.
+
+    Returns:
+      True, if remote file exist. False, if remote file doesn't exist.
+
+    :meta public:
+    """
+    pass
+
+  @abstractmethod
+  def _lstat(self, remote_path: str) -> os.stat_result:
+    """Protected method which returns statistics of a file (eg. size, last date modified,...)  Doesn't follow symlinks.
+    Undefined behavior if remote file doesn't exist.
+    
+    Args:
+      remote_path: Path of a remote file.
+
+    Returns:
+      True, if remote file is exist. False, if remote file doesn't exist.
+
+    """
     pass
 
   @abstractmethod
@@ -71,7 +161,7 @@ class PConnection(ABC):
 
   @abstractmethod
   def _push(self, local_path:str, remote_path:str):
-    """Protected method which uploads/pushes a file from a local storage to a remote storage in the binary form. Behavior is undefined if destination folder doesn't exist or remote file already exists.
+    """Protected method which uploads/pushes a nondirectory file from a local storage to a remote storage in the binary form. Behavior is undefined if destination folder or source file doesn't exist, source is directory or remote file already exists.
 
     Args:
       local_path: Path of a local file to upload.
@@ -83,7 +173,7 @@ class PConnection(ABC):
 
   @abstractmethod
   def _pull(self, remote_path:str, local_path:str):
-    """Protected method which downloads/pulls a file from a remote storage to a local storage in the binary form. Behavior is undefined if destination folder doesn't exist.
+    """Protected method which downloads/pulls a nondirectory file from a remote storage to a local storage in the binary form. Behavior is undefined if source file or destination folder doesn't exist.
 
     Args:
       remote_path: Path of a remote file to download.
@@ -143,9 +233,7 @@ class PConnection(ABC):
 
   @abstractmethod
   def _exists(self, remote_path:str) -> bool:
-    """Protected method which checks, whether a remote file exist.
-    
-    KNOWN BUG: Behavior is undefined in case of broken symlinks. 
+    """Protected method which checks, whether a remote file exist. If the remote file is a broken symlink, it returns False.
 
     Args:
       remote_path: Path of a remote file.
@@ -159,7 +247,7 @@ class PConnection(ABC):
 
   @abstractmethod
   def _lexists(self, remote_path:str) -> bool:
-    """Protected method which checks, whether a remote file exist.
+    """Protected method which checks, whether a remote file exist. If the remote file is a broken symlink, it returns True.
     
     KNOWN BUG: Behavior is undefined in case of broken symlinks. 
 
@@ -175,15 +263,13 @@ class PConnection(ABC):
     pass
 
   def exists(self, remote_path:str) -> bool:
-    """Method which checks, whether a remote file exist.
+    """Method which checks, whether a remote file exist. Returns False for broken symlinks.
     
-    KNOWN BUG: Behavior is undefined in case of broken symlinks. 
-
     Args:
       remote_path: Path of a remote file.
 
     Returns:
-      True, if remote file is exist. False, if remote file doesn't exist
+      True, if remote file exists. False, if remote file doesn't exist.
 
     """
 
@@ -196,15 +282,13 @@ class PConnection(ABC):
     return ret
 
   def lexists(self, remote_path):
-    """Method which checks, whether a remote file exist.
+    """Method which checks, whether a remote file exist. Returns True for broken symlinks.
     
-    KNOWN BUG: Behavior is undefined in case of broken symlinks. 
-
     Args:
       remote_path: Path of a remote file.
 
     Returns:
-      True, if remote file is exist. False, if remote file doesn't exist
+      True, if remote file exists. False, if remote file doesn't exist.
 
     """
     logging.debug("Does remote file {} lexist?".format(remote_path))
@@ -215,12 +299,16 @@ class PConnection(ABC):
     logging.debug("Remote file {} lexists: {}".format(remote_path, ret))
     return ret
 
-  def __check_file_existance(self, remote_path):
+  def __check_link_existance(self, remote_path):
     if not self.lexists(remote_path):
       raise FileNotFoundError("Remote file {} not found.".format(remote_path))
 
+  def __check_file_existance(self, remote_path):
+    self.__check_link_existance(remote_path)
+
     if not self.exists(remote_path):
       raise FileNotFoundError("Remote file {} is a broken symlink.".format(remote_path))
+
 
   def __check_file_nonexistance(self, remote_path):
     if self._lexists(remote_path):
@@ -263,6 +351,32 @@ class PConnection(ABC):
     if os.path.lexists(local_path) and os.path.isdir(local_path):
       raise IsADirectoryError("Local file {} is a directory.".format(local_path))
 
+  def stat(self, remote_path: str) -> os.stat_result:
+    """Returns statistics of a file (eg. size, last date modified,...) Follows symlinks to a destination file.
+    
+    Args:
+      remote_path: Path of a remote file.
+
+    Returns:
+      True, if remote file exist. False, if remote file doesn't exist.
+
+    """
+    self.__check_file_existance(remote_path)
+    return self._stat(remote_path)
+
+  def lstat(self, remote_path: str) -> os.stat_result:
+    """Returns statistics of a file (eg. size, last date modified,...)  Doesn't follow symlinks.
+    
+    Args:
+      remote_path: Path of a remote file.
+
+    Returns:
+      True, if remote file is exist. False, if remote file doesn't exist.
+
+    """
+    self.__check_link_existance(remote_path)
+    return self._lstat(remote_path)
+
   def __encode(self, from_lpath, to_lpath):
     if self.__text_transmission:
 
@@ -299,6 +413,15 @@ class PConnection(ABC):
     
 
   def push(self, local_path, remote_path):
+    """Uploads/pushes a file from a local storage to a remote storage in the binary form.
+
+    Args:
+      local_path: Path of a local file to upload.
+      remote_path: Path on the remote storage, where to upload/push a local file.
+      
+    :meta public: 
+    """
+
     logging.debug("Pushing local file {} to the remote file {}.".format(local_path, remote_path))
 
     remote_path = path_normalize(remote_path)

@@ -5,23 +5,39 @@ import ftputil
 from os.path import split
 
 class FtpPConnection(abstract_pconnection.PConnection):
-  def __init__(self, **arg):
-    super().__init__(**arg)
+  '''Class for FTP connection. Public interface with an exception of __init__ and close is inherited from PConnection.'''
 
-    if arg['tls']:
+
+  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, username: str, password: str, port: int = 21, tls: bool = False, passive_mode: bool = False, debug_level: int = 1, connection_encoding: str = 'UTF8'):
+    '''The constructor of FtpPConnection.
+    
+    Args:
+      settings: The settings for the super class PConnection.
+      host: Remote address of the server.
+      port: Port for a connection.
+      username: Remote username.
+      password: Remote password.
+      tls: Enables TLS.
+      passive_mode: Enables passive mode of FTP connection.
+      debug_level: Specifies how much logs should be generated. 0 - almost non, 1 - more, 2 - log almost everything
+      connection_encoding: Encoding used for a connection.
+    '''
+    super().__init__(settings)
+
+    if tls:
       factory_b_class = ftplib.FTP_TLS
     else:
       factory_b_class = ftplib.FTP
 
     session_factory = ftputil.session.session_factory(
       base_class = factory_b_class,
-      port = arg['port'],
-      encrypt_data_channel = arg['tls'],
-      encoding = 'UTF-8',
-      use_passive_mode = arg['passive_mode'],
-      debug_level=2)
+      port = port,
+      encrypt_data_channel = tls,
+      encoding = connection_encoding,
+      use_passive_mode = passive_mode,
+      debug_level=debug_level)
 
-    self.__ftp = ftputil.FTPHost(arg['host'], arg['username'], arg['password'], session_factory=session_factory)
+    self.__ftp = ftputil.FTPHost(host, username, password, session_factory=session_factory)
     self.__ftp.use_list_a_option = True
 
 
@@ -58,4 +74,8 @@ class FtpPConnection(abstract_pconnection.PConnection):
   def _lexists(self, remote_path):
      return self._exists(remote_path)
 
+  def _stat(self, remote_path):
+    raise NotImplementedError("stat is not implemented for FTP yet.")
 
+  def _lstat(self, remote_path):
+    raise NotImplementedError("stat is not implemented for FTP yet.")

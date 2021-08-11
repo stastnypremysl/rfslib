@@ -5,15 +5,29 @@ import socket
 from os.path import split
 
 class Smb12PConnection(abstract_pconnection.PConnection):
-  def __init__(self, **arg):
-    super().__init__(**arg)
+  '''Class for SMB connection version 1 or 2. Public interface with an exception of __init__ and close is inherited from PConnection.'''
+  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, service_name: str, username: str, password: str, port: int = 139, use_direct_tcp: bool = False, client_name : str = "RFS", use_ntlm_v1: bool = False):
+    '''The constructor of Smb12PConnection. Opens SMB connection version 1 or 2, when called.
+    
+    Args:
+      settings: The settings for the super class PConnection.
+      host: Remote address of the server.
+      service_name: Name of a shared folder.
+      port: Port for the SMB connection.
+      username: Remote username.
+      password: Remote password.
+      use_direct_tcp: Activates direct tcp mode for SMB.
+      client_name: Name of this client, which will be sent to a server.
+      use_ntlm_v1: Enables NTLM version 1 instead of NTLM version 2.
+    '''
+    super().__init__(settings)
 
-    self.__service_name = arg["service_name"]
-    self.__smb = SMBConnection(arg["username"], arg["password"], arg["client_name"], arg["host"],
-      use_ntlm_v2=not arg["use_ntlm_v1"], is_direct_tcp=arg["use_direct_tcp"])
+    self.__service_name = service_name
+    self.__smb = SMBConnection(username, password, client_name, host,
+      use_ntlm_v2=not use_ntlm_v1, is_direct_tcp=use_direct_tcp)
 
-    if not self.__smb.connect(arg["host"], port=arg["port"]):
-      raise ConnectionError("Can't connect to SMB host {}:{}.".format(arg["host"], arg["port"]))
+    if not self.__smb.connect(host, port=port):
+      raise ConnectionError("Can't connect to SMB host {}:{}.".format(host, port))
 
   def close(self):
     self.__smb.close()
@@ -52,5 +66,11 @@ class Smb12PConnection(abstract_pconnection.PConnection):
   
   def _lexists(self, remote_path):
     return self._exists(remote_path)
+
+  def _stat(self, remote_path):
+    raise NotImplementedError("stat is not implemented for SMB12 yet")
+
+  def _lstat(self, remote_path):
+    raise NotImplementedError("lstat is not implemented for SMB12 yet")
 
 
