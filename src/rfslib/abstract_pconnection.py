@@ -17,7 +17,7 @@ import logging, sys
 
 class p_connection_settings():
   '''This object represents settings appliable for all PConnection instances (instances of class, which inherits from PConnection).'''
-  def __init__():
+  def __init__(self):
     '''The constructor inicializes the class to default values.'''
     pass
   
