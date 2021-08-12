@@ -35,7 +35,7 @@ class p_connection_settings():
   '''Does remote files use CRLF? If True, it is supposed, they do. If False, it is supposed, they use LF.'''
 
   direct_write:bool = False
-  '''NOT IMPLEMENTED YET. If True, cp will write output directly to file. If False all cp operations on regular files will create firstly tmp file in target folder and then move result to file.'''
+  '''NOT IMPLEMENTED YET. If True, pust will write output directly to file. If False all push operations on regular files will create firstly tmp file in target folder and then move result to file.'''
 
   skip_validation:bool = False
   '''NOT IMPLEMENTED YED. If True, all validations of input will be skipped. Undefined behavior may happen if input is wrong. Increses performance.'''
