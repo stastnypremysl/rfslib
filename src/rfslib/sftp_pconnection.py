@@ -36,7 +36,7 @@ class SftpPConnection(abstract_pconnection.PConnection):
 
     client.set_missing_host_key_policy(host_key_policy)
       
-    if arg["password"] == None:
+    if password == None:
       client.connect(hostname=host, port=port, username=username, key_filename=key_filename)
     else:
       client.connect(hostname=host, port=port, username=username, password=password)
