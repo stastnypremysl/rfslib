@@ -7,7 +7,7 @@ import logging
 class SftpPConnection(abstract_pconnection.PConnection):
   '''Class for SFTP connection. Public interface with an exception of __init__ and close is inherited from PConnection.'''
 
-  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, username: str, password: str = None, key_filename : str = '~/.ssh/id_rsa', port: int = 22, no_host_key_checking: bool = False):
+  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, username: str, password: str = None, keyfile : str = '~/.ssh/id_rsa', port: int = 22, no_host_key_checking: bool = False):
     '''The constructor of SftpPConnection. Opens SFTP connection, when called. If None password is specified, the key authentication will be used. Otherwise the password authentication will be used.
     
     Args:
@@ -16,7 +16,7 @@ class SftpPConnection(abstract_pconnection.PConnection):
       port: Port for the SFTP connection.
       username: Remote username
       password: Password for a SFTP connection. If None is provided, key authentication will be used.
-      key_filename: A path to key.
+      keyfile: A path to key file.
       no_host_key_checking: Specifies, whether remote host key should be verified or not.
     '''
     super().__init__(settings)
