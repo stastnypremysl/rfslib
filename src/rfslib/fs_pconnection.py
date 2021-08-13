@@ -11,7 +11,7 @@ class FsPConnection(abstract_pconnection.PConnection):
     Args:
       settings: The settings for super class PConnection.
     '''
-    super().__init__(**arg)
+    super().__init__(settings)
 
   def close(self):
     pass
