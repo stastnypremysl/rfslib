@@ -35,7 +35,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
       encrypt_data_channel = tls,
       encoding = connection_encoding,
       use_passive_mode = passive_mode,
-      debug_level=debug_level)
+      debug_level = debug_level)
 
     self.__ftp = ftputil.FTPHost(host, username, password, session_factory=session_factory)
     self.__ftp.use_list_a_option = True
@@ -69,10 +69,11 @@ class FtpPConnection(abstract_pconnection.PConnection):
     self.__ftp.unlink(remote_path)
 
   def _exists(self, remote_path):
-    self.__ftp.path.exists(remote_path)
+    return self.__ftp.path.exists(remote_path)
   
   def _lexists(self, remote_path):
-     return self._exists(remote_path)
+    # To be done
+    return self._exists(remote_path)
 
   def _stat(self, remote_path):
     raise NotImplementedError("stat is not implemented for FTP yet.")
