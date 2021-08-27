@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-#import pysmb
-
 import tempfile
 import os
 import os.path
