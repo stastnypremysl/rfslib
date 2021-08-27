@@ -21,7 +21,10 @@ __p_normalize_re2 = re.compile(r'/$')
 
 def path_normalize(path):
   path = __p_normalize_re1.sub('/', path)
-  path = __p_normalize_re2.sub('', path)
+
+  if path != '/':
+    path = __p_normalize_re2.sub('', path)
+
   return path
 
 def generic_path_normalize(path):
