@@ -131,7 +131,7 @@ class PConnection(ABC):
 
 
   def get_default_dmask(self) -> int:
-    '''Returns default_dmask settings. For moe details see p_connection_settings.'''
+    '''Returns default_dmask settings. For more details see p_connection_settings.'''
     return self.__default_dmask
  
 
