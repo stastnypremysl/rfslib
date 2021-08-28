@@ -61,6 +61,9 @@ class Smb12PConnection(abstract_pconnection.PConnection):
     self.__smb.deleteFiles(self.__service_name, remote_path)
 
   def _exists(self, remote_path):
+    if remote_path == '/':
+      return True
+
     dirname, basename = split(remote_path)
     return basename in self._listdir(dirname)
   
