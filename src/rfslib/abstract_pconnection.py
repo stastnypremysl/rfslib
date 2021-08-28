@@ -47,22 +47,22 @@ class p_connection_settings():
 class p_stat_result():
   '''Representation of the attributes of a file (or proxied file). It attemps to mirror the object returned by os.stat as closely as possible.'''
 
-  st_mode = None
+  st_mode:int = None
   ''' This field contains the file type and mode.'''
-  st_size = None
+  st_size:int = None
   '''This field gives the size of the file (if it is a regular file or a symbolic link) in bytes. The size of a symbolic link is the length of the pathname it contains, without a terminating null byte.'''
 
-  st_mtime = None
+  st_mtime:int = None
   '''This is the time of last modification of file data.'''
-  st_atime = None
+  st_atime:int = None
   '''This is the time of the last access of file data.'''
 
-  st_uid = None
+  st_uid:int = None
   '''This field contains the user ID of the owner of the file.'''
-  st_gid = None
+  st_gid:int = None
   '''This field contains the ID of the group owner of the file.'''
 
-  st_nlink = None
+  st_nlink:int = None
   '''This field contains the number of hard links to the file.'''
 
 
