@@ -38,26 +38,78 @@ class p_connection_settings():
   skip_validation:bool = False
   '''NOT IMPLEMENTED YED. If True, all validations of input will be skipped. Undefined behavior may happen if input is wrong. Increses performance.'''
 
+  default_fmask:int = 0133
+  '''If mode (permissions) of a nondirectory file can't be fetched, this value will be used instead of it.'''
+  default_dmask:int = 0022
+  '''If mode (permissions) of a directory can't be fetched, this value will be used instead of it.'''
+
+
+class p_stat_result():
+  '''Representation of the attributes of a file (or proxied file). It attemps to mirror the object returned by os.stat as closely as possible.'''
+
+  st_mode = None
+  ''' This field contains the file type and mode.'''
+  st_size = None
+  '''This field gives the size of the file (if it is a regular file or a symbolic link) in bytes. The size of a symbolic link is the length of the pathname it contains, without a terminating null byte.'''
+
+  st_mtime = None
+  '''This is the time of last modification of file data.'''
+  st_atime = None
+  '''This is the time of the last access of file data.'''
+
+  st_uid = None
+  '''This field contains the user ID of the owner of the file.'''
+  st_gid = None
+  '''This field contains the ID of the group owner of the file.'''
+
+  st_nlink = None
+  '''This field contains the number of hard links to the file.'''
+
+
+def _stat_unpack(pk_stat) -> p_stat_result:
+  '''This function tries to translate arbitrary stat object to p_stat_result object.'''
+  stat = p_stat_result()
+  
+  def aliases(*kw, default_value=None):
+    default = kw[0]
+    for alias in kw:
+      if hasattr(pk_stat, attr):
+        setattr(stat, default, getattr(pk_stat, attr))
+        return
+    
+    if default_value is not None:
+      setattr(stat, default, attr)
+
+
+  aliases('st_mode', 'st_mode_smb12')
+  aliases('st_size', 'file_size')
+
+  aliases('st_mtime', 'last_write_time')
+  aliases('st_atime', 'last_access_time', default_value=stat.st_mtime)
+  
+  aliases('st_uid', default_value=0)
+  aliases('st_gid', default_value=0)
+
+  aliases('st_nlink', default_value=0)
+
+  return stat
+
 
 class PConnection(ABC):
   def set_settings(self, settings: p_connection_settings):
     '''The procedure sets all generic settings for PConnection.
 
     Args:
-      settings: A p_connection_settings object with all generic settings for PConnection.
+      settings: A p_connection_settings object with all generic settings for PConnection. If some attribute in object is missing, no operation will be done with it.
     '''
 
-    self.__text_transmission = settings.text_transmission
+    def forward(attr):
+      if hasattr(settings, attr):
+        setattr(self, '__' + attr, getattr(settings, attr))
 
-    self.__local_encoding = settings.local_encoding
-    self.__remote_encoding = settings.remote_encoding
+    for i_attr in dir(p_connection_settings):
+      forward(i_attr)
 
-    self.__local_crlf = settings.local_crlf
-    self.__remote_crlf = settings.remote_crlf
-
-    self.__direct_write = settings.direct_write
-
-    self.__skip_validation = settings.skip_validation
 
   def get_settings(self) -> p_connection_settings:
     '''The procedure sets all generic settings for PConnection.
@@ -67,30 +119,36 @@ class PConnection(ABC):
     '''
     ret = p_connection_settings()
 
-    ret.text_transmission = self.__text_transmission
-
-    ret.local_encoding = self.__local_encoding
-    ret.remote_encoding = self.__remote_encoding
-
-    ret.local_crlf = self.__local_crlf
-    ret.remote_crlf = self.__remote_crlf
-
-    ret.direct_write = self.__direct_write
-
-    ret.skip_validation = self.__skip_validation
+    for i_attr in dir(p_connection_settings):
+      setattr(ret, i_attr, getattr(self, '__' + i_attr))
 
     return ret
+
+
+  def get_default_fmask(self) -> int:
+    '''Returns default_fmask settings. For more details see p_connection_settings.'''
+    return self.__default_fmask
+
+
+  def get_default_dmask(self) -> int:
+    '''Returns default_dmask settings. For moe details see p_connection_settings.'''
+    return self.__default_dmask
  
+
   def __init__(self, settings: p_connection_settings):
     """The constructor of a abstract class. If it is not called from child class, the behavior is undefined.
 
     If local_encoding and remote_encoding have same values, no recoding is done. Analogically if local_crlf and remote_crlf is same, no substitution between LF and CRLF is done.
 
     Args:
-      settings: A p_connection_settings object with all generic settings for PConnection.
+      settings: A p_connection_settings object with all generic settings for PConnection. Be sure, that all needed attributes are present, or AttributeError will be raised.
 
     :meta public:
     """
+
+    for i_attr in dir(p_connection_settings):
+      if not hasattr(settings, i_attr):
+        raise AttributeError("settings argument doesn't have attribute {i_attr}")
 
     self.set_settings(settings)
     
@@ -109,7 +167,7 @@ class PConnection(ABC):
       remote_path: Path of a remote file.
 
     Returns:
-      True, if remote file exist. False, if remote file doesn't exist.
+      The function returns os.stat_result like object, which is further parsed by _stat_unpack function. For more details please see source code. 
 
     :meta public:
     """
@@ -124,7 +182,7 @@ class PConnection(ABC):
       remote_path: Path of a remote file.
 
     Returns:
-      True, if remote file is exist. False, if remote file doesn't exist.
+      The function returns os.stat_result like object, which is further parsed by _stat_unpack function. For more details please see source code. 
 
     """
     pass
@@ -349,31 +407,31 @@ class PConnection(ABC):
     if os.path.lexists(local_path) and os.path.isdir(local_path):
       raise IsADirectoryError("Local file {} is a directory.".format(local_path))
 
-  def stat(self, remote_path: str) -> os.stat_result:
+  def stat(self, remote_path: str) -> p_stat_result:
     """Returns statistics of a file (eg. size, last date modified,...) Follows symlinks to a destination file.
     
     Args:
       remote_path: Path of a remote file.
 
     Returns:
-      True, if remote file exist. False, if remote file doesn't exist.
+      An object whose attributes correspond to the attributes of Python’s stat structure as returned by os.stat, except that it contains fewer fields.
 
     """
     self.__check_file_existance(remote_path)
-    return self._stat(remote_path)
+    return _stat_unpack( self._stat(remote_path) )
 
-  def lstat(self, remote_path: str) -> os.stat_result:
+  def lstat(self, remote_path: str) -> p_stat_result:
     """Returns statistics of a file (eg. size, last date modified,...)  Doesn't follow symlinks.
     
     Args:
       remote_path: Path of a remote file.
 
     Returns:
-      True, if remote file is exist. False, if remote file doesn't exist.
+      An object whose attributes correspond to the attributes of Python’s stat structure as returned by os.stat, except that it contains fewer fields.
 
     """
     self.__check_link_existance(remote_path)
-    return self._lstat(remote_path)
+    return _stat_unpack( self._lstat(remote_path) )
 
   def __encode(self, from_lpath, to_lpath):
     if self.__text_transmission:
