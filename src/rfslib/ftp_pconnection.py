@@ -77,7 +77,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
     return self._exists(remote_path)
 
   def _stat(self, remote_path):
-    raise NotImplementedError("stat is not implemented for FTP yet.")
+    return self.__ftp.stat(remote_path)
 
   def _lstat(self, remote_path):
-    raise NotImplementedError("stat is not implemented for FTP yet.")
+    return self.__ftp.lstat(remote_path)
