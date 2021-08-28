@@ -107,11 +107,11 @@ class Smb23PConnection(abstract_pconnection.PConnection):
   def _stat(self, remote_path):
     p_remote_path = self.__prefix_path(remote_path)
 
-    return smb.stat(remote_path)
+    return smb.stat(p_remote_path)
 
   def _lstat(self, remote_path):
     p_remote_path = self.__prefix_path(remote_path)
     
-    return smb.lstat(remote_path)
+    return smb.lstat(p_remote_path)
 
 
