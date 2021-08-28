@@ -72,7 +72,8 @@ class FtpPConnection(abstract_pconnection.PConnection):
     return self.__ftp.path.exists(remote_path)
   
   def _lexists(self, remote_path):
-    # To be done
+    # To be fixed
+    # Waiting for https://github.com/sschwarzer/ftputil/pull/1
     return self._exists(remote_path)
 
   def _stat(self, remote_path):
