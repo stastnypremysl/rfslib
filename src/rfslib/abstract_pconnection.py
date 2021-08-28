@@ -38,9 +38,9 @@ class p_connection_settings():
   skip_validation:bool = False
   '''NOT IMPLEMENTED YED. If True, all validations of input will be skipped. Undefined behavior may happen if input is wrong. Increses performance.'''
 
-  default_fmask:int = 0133
+  default_fmask:int = 0o0133
   '''If mode (permissions) of a nondirectory file can't be fetched, this value will be used instead of it.'''
-  default_dmask:int = 0022
+  default_dmask:int = 0o0022
   '''If mode (permissions) of a directory can't be fetched, this value will be used instead of it.'''
 
 
