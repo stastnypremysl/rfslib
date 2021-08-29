@@ -106,7 +106,7 @@ class PConnection(ABC):
       settings: A p_connection_settings object with all generic settings for PConnection. If some attribute in object is missing, no operation will be done with it.
     '''
 
-    for attr in filter(reg_public, dir(p_connection_settings)):
+    for attr in filter(re_public, dir(p_connection_settings)):
       if hasattr(settings, attr):
         exec('self.__{attr} = settings.{attr}')
 
@@ -120,7 +120,7 @@ class PConnection(ABC):
     '''
     ret = p_connection_settings()
 
-    for attr in filter(reg_public, dir(p_connection_settings)):
+    for attr in filter(re_public, dir(p_connection_settings)):
       exec('ret.{attr} = self.__{attr}')
 
     return ret
