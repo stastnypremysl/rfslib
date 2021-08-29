@@ -76,8 +76,8 @@ def _stat_unpack(pk_stat) -> p_stat_result:
   def aliases(*kw, default_value=None):
     default = kw[0]
     for alias in kw:
-      if hasattr(pk_stat, attr):
-        exec(f'stat.{default} = pk_stat.{attr}')
+      if hasattr(pk_stat, alias):
+        exec(f'stat.{default} = pk_stat.{alias}')
         return
     
     if default_value is not None:
