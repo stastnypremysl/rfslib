@@ -108,7 +108,7 @@ class PConnection(ABC):
 
     for attr in filter(re_public_var.match, dir(p_connection_settings)):
       if hasattr(settings, attr):
-        logging.debug(f"Setting self.__{attr} to {settings.attr}.")
+        logging.debug(f"Setting self.__{attr} to {getattr(settings, attr)}.")
         exec(f'self.__{attr} = settings.{attr}')
 
 
