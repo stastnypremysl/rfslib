@@ -77,11 +77,11 @@ def _stat_unpack(pk_stat) -> p_stat_result:
     default = kw[0]
     for alias in kw:
       if hasattr(pk_stat, attr):
-        exec('stat.{default} = pk_stat.{attr}')
+        exec(f'stat.{default} = pk_stat.{attr}')
         return
     
     if default_value is not None:
-      exec('stat.{default} = default_value')
+      exec(f'stat.{default} = default_value')
 
 
   aliases('st_mode', 'st_mode_smb12')
@@ -108,7 +108,7 @@ class PConnection(ABC):
 
     for attr in filter(re_public_var.match, dir(p_connection_settings)):
       if hasattr(settings, attr):
-        exec('self.__{attr} = settings.{attr}')
+        exec(f'self.__{attr} = settings.{attr}')
 
 
 
@@ -121,7 +121,7 @@ class PConnection(ABC):
     ret = p_connection_settings()
 
     for attr in filter(re_public_var.match, dir(p_connection_settings)):
-      exec('ret.{attr} = self.__{attr}')
+      exec(f'ret.{attr} = self.__{attr}')
 
     return ret
 
