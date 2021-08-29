@@ -242,6 +242,7 @@ class PConnection(ABC):
   @abstractmethod
   def _isdir(self, remote_path:str) -> bool:
     """Protected method which checks, whether a remote file is a directory.
+    The function is DEPRECATED and will be substituted using stat or lstat.
 
     Args:
       remote_path: A path of a directory.
