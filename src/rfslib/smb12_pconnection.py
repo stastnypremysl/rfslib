@@ -6,7 +6,9 @@ from os.path import split
 
 class Smb12PConnection(abstract_pconnection.PConnection):
   '''Class for SMB connection version 1 or 2. Public interface with an exception of __init__ and close is inherited from PConnection.'''
-  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, service_name: str, username: str, password: str, port: int = 139, use_direct_tcp: bool = False, client_name : str = "RFS", use_ntlm_v1: bool = False):
+  def __init__(self, settings: abstract_pconnection.p_connection_settings, 
+    host: str, service_name: str, username: str, password: str, 
+    port: int = 139, use_direct_tcp: bool = False, client_name: str = "RFS", use_ntlm_v1: bool = False):
     '''The constructor of Smb12PConnection. Opens SMB connection version 1 or 2, when called.
     
     Args:
@@ -28,6 +30,11 @@ class Smb12PConnection(abstract_pconnection.PConnection):
 
     if not self.__smb.connect(host, port=port):
       raise ConnectionError("Can't connect to SMB host {}:{}.".format(host, port))
+
+    if self.__smb.isUsingSMB2:
+      self.__version = 2
+    else:
+      self.__version = 1
 
   def close(self):
     self.__smb.close()
@@ -68,12 +75,40 @@ class Smb12PConnection(abstract_pconnection.PConnection):
     return basename in self._listdir(dirname)
   
   def _lexists(self, remote_path):
+    # Yes, this is wrong.
     return self._exists(remote_path)
 
+  def __get_mask(self, attr):
+    if attr.isDirectory:
+      mask = get_default_dmask()
+
+    else:
+      mask = get_default_fmask()
+
+    if attr.isReadOnly:
+      mask = 0o222 & mask
+
+    return mask
+
+  def __get_mode(self, attr):
+    mask = self.__get_mask(attr)
+    pmode = (~ mask) & 0o777
+
+    if attr.isDirectory:
+      return pmode | 0o0040000
+
+    else:
+      return pmode | 0o0100000
+
+
   def _stat(self, remote_path):
-    raise NotImplementedError("stat is not implemented for SMB12 yet")
+    attr = self.__smb.getAttributes(self.__service_name, remote_path)
+
+    attr.st_mode_smb12 = self.__get_mode(attr)
+    return attr
 
   def _lstat(self, remote_path):
-    raise NotImplementedError("lstat is not implemented for SMB12 yet")
+    # Yes, this is also wrong.
+    return self._stat(remote_path)
 
 
