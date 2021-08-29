@@ -13,6 +13,9 @@ import random
 
 import logging, sys
 
+import re
+re_public_var = re.compile(r'^[^_].*')
+
 class p_connection_settings():
   '''This object represents settings appliable for all PConnection instances (instances of class, which inherits from PConnection).'''
   def __init__(self):
@@ -74,11 +77,11 @@ def _stat_unpack(pk_stat) -> p_stat_result:
     default = kw[0]
     for alias in kw:
       if hasattr(pk_stat, attr):
-        setattr(stat, default, getattr(pk_stat, attr))
+        exec('stat.{default} = pk_stat.{attr}')
         return
     
     if default_value is not None:
-      setattr(stat, default, attr)
+      exec('stat.{default} = default_value')
 
 
   aliases('st_mode', 'st_mode_smb12')
@@ -103,12 +106,10 @@ class PConnection(ABC):
       settings: A p_connection_settings object with all generic settings for PConnection. If some attribute in object is missing, no operation will be done with it.
     '''
 
-    def forward(attr):
+    for attr in filter(reg_public, dir(p_connection_settings)):
       if hasattr(settings, attr):
-        setattr(self, '__' + attr, getattr(settings, attr))
+        exec('self.__{attr} = settings.{attr}')
 
-    for i_attr in dir(p_connection_settings):
-      forward(i_attr)
 
 
   def get_settings(self) -> p_connection_settings:
@@ -119,8 +120,8 @@ class PConnection(ABC):
     '''
     ret = p_connection_settings()
 
-    for i_attr in dir(p_connection_settings):
-      setattr(ret, i_attr, getattr(self, '__' + i_attr))
+    for attr in filter(reg_public, dir(p_connection_settings)):
+      exec('ret.{attr} = self.__{attr}')
 
     return ret
 
