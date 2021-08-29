@@ -75,13 +75,15 @@ def _stat_unpack(pk_stat) -> p_stat_result:
   
   def aliases(*kw, default_value=None):
     default = kw[0]
+    lstat = stat
+
     for alias in kw:
       if hasattr(pk_stat, alias):
-        exec(f'stat.{default} = pk_stat.{alias}')
+        exec(f'lstat.{default} = pk_stat.{alias}')
         return
     
     if default_value is not None:
-      exec(f'stat.{default} = default_value')
+      exec(f'lstat.{default} = default_value')
 
 
   aliases('st_mode', 'st_mode_smb12')
