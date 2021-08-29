@@ -108,6 +108,7 @@ class PConnection(ABC):
 
     for attr in filter(re_public_var.match, dir(p_connection_settings)):
       if hasattr(settings, attr):
+        logging.debug(f"Setting self.__{attr} to {settings.attr}.")
         exec(f'self.__{attr} = settings.{attr}')
 
 
@@ -120,7 +121,7 @@ class PConnection(ABC):
     '''
     ret = p_connection_settings()
 
-    for attr in filter(re_public_var.match, dir(p_connection_settings)):
+    for attr in filter(re_public_var.match, dir(p_connection_settings())):
       exec(f'ret.{attr} = self.__{attr}')
 
     return ret
@@ -147,9 +148,9 @@ class PConnection(ABC):
     :meta public:
     """
 
-    for i_attr in dir(p_connection_settings):
-      if not hasattr(settings, i_attr):
-        raise AttributeError("settings argument doesn't have attribute {i_attr}")
+    for attr in filter(re_public_var.match, dir(p_connection_settings())):
+      if not hasattr(settings, attr):
+        raise AttributeError(f"Parameter settings argument doesn't have attribute {attr}")
 
     self.set_settings(settings)
     
