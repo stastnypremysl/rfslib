@@ -15,6 +15,7 @@ import logging, sys
 
 import re
 re_public_var = re.compile(r'^[^_].*')
+#re_not_dot_dotdot = re.compile(r'^[^.][^.]*.*
 
 class p_connection_settings():
   '''This object represents settings appliable for all PConnection instances (instances of class, which inherits from PConnection).'''
@@ -352,34 +353,34 @@ class PConnection(ABC):
       True, if remote file exists. False, if remote file doesn't exist.
 
     """
-    logging.debug("Does remote file {} lexist?".format(remote_path))
+    logging.debug(f"Does remote file {remote_path} lexist?")
 
     remote_path = path_normalize(remote_path)
     ret = self._lexists(remote_path)
 
-    logging.debug("Remote file {} lexists: {}".format(remote_path, ret))
+    logging.debug(f"Remote file {remote_path} lexists: {ret}")
     return ret
 
   def __check_link_existance(self, remote_path):
     if not self.lexists(remote_path):
-      raise FileNotFoundError("Remote file {} not found.".format(remote_path))
+      raise FileNotFoundError(f"Remote file {remote_path} not found.")
 
   def __check_file_existance(self, remote_path):
     self.__check_link_existance(remote_path)
 
     if not self.exists(remote_path):
-      raise FileNotFoundError("Remote file {} is a broken symlink.".format(remote_path))
+      raise FileNotFoundError(f"Remote file {remote_path} is a broken symlink.")
 
 
   def __check_file_nonexistance(self, remote_path):
     if self._lexists(remote_path):
-      raise InterruptedError("Remote destination file {} exists.".format(remote_path))
+      raise InterruptedError(f"Remote destination file {remote_path} exists.")
 
   def __check_not_folder(self, remote_path):
     self.__check_file_existance(remote_path)
 
     if self._isdir(remote_path):
-      raise IsADirectoryError("Remote file {} is a directory.".format(remote_path))
+      raise IsADirectoryError(f"Remote file {remote_path} is a directory.")
 
   def __check_potencial_not_folder(self, remote_path):
     if self._lexists(remote_path) and self._isdir(remote_path):
@@ -389,28 +390,28 @@ class PConnection(ABC):
     self.__check_file_existance(remote_path)
 
     if not self._isdir(remote_path):
-      raise NotADirectoryError("Remote file {} is not a directory.".format(remote_path))
+      raise NotADirectoryError(f"Remote file {remote_path} is not a directory.")
 
 
   def __check_local_file_existance(self, local_path):
     if not os.path.lexists(local_path):
-      raise FileNotFoundError("Local file {} not found.".format(local_path))
+      raise FileNotFoundError(f"Local file {local_path} not found.")
     
     if not os.path.exists(local_path):
-      raise FileNotFoundError("Local file {} is a broken symlink.".format(local_path))
+      raise FileNotFoundError(f"Local file {local_path} is a broken symlink.")
     
   def __check_local_file_nonexistance(self, local_path):
     if os.path.lexists(local_path):
-      raise InterruptedError("Local destination file {} exists.".format(local_path))
+      raise InterruptedError(f"Local destination file {local_path} exists.")
 
   def __check_local_file_not_folder(self, local_path):
     self.__check_local_file_existance(local_path)
     if os.path.isdir(local_path):
-      raise IsADirectoryError("Local file {} is a directory.".format(local_path))
+      raise IsADirectoryError(f"Local file {local_path} is a directory.")
       
   def __check_local_potencial_file_not_folder(self, local_path):
     if os.path.lexists(local_path) and os.path.isdir(local_path):
-      raise IsADirectoryError("Local file {} is a directory.".format(local_path))
+      raise IsADirectoryError(f"Local file {local_path} is a directory.")
 
   def stat(self, remote_path: str) -> p_stat_result:
     """Returns statistics of a file (eg. size, last date modified,...) Follows symlinks to a destination file.
@@ -483,7 +484,7 @@ class PConnection(ABC):
     :meta public: 
     """
 
-    logging.debug("Pushing local file {} to the remote file {}.".format(local_path, remote_path))
+    logging.debug(f"Pushing local file {local_path} to the remote file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
     local_path = path_normalize(local_path)
@@ -500,11 +501,11 @@ class PConnection(ABC):
       self._push(tmp_file, tmp_file2)
       self.fmv(tmp_file2, remote_path)
 
-    logging.debug("Pushing local file {} to the remote file {} is completed.".format(local_path, remote_path))
+    logging.debug(f"Pushing local file {local_path} to the remote file {remote_path} is completed.")
 
   #recursive push
   def rpush(self, local_path, remote_path):
-    logging.debug("Recursive pushing of local file {} to the remote file {}.".format(local_path, remote_path))
+    logging.debug(f"Recursive pushing of local file {local_path} to the remote file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
     local_path = path_normalize(local_path)
@@ -514,7 +515,7 @@ class PConnection(ABC):
     if os.path.isdir(local_path):
       if self.lexists(remote_path): 
         if not self.isdir(remote_path):
-          raise InterruptedError("Cannot upload a folder {} to a non-folder path {}".format(local_path, remote_path))
+          raise InterruptedError(f"Cannot upload a folder {local_path} to a non-folder path {remote_path}.")
         else:
           self.mkdir(remote_path)
         
@@ -524,15 +525,15 @@ class PConnection(ABC):
     else:
       if self.lexists(remote_path): 
         if self.isdir(remote_path):
-          raise InterruptedError("Cannot upload a non-folder {} to a folder path {}".format(local_path, remote_path))
+          raise InterruptedError(f"Cannot upload a non-folder {local_path} to a folder path {remote_path}")
 
       self.push(local_path, remote_path)
 
-    logging.debug("Recursive pushing of local file {} to the remote file {} is completed.".format(local_path, remote_path))
+    logging.debug(f"Recursive pushing of local file {local_path} to the remote file {remote_path} is completed.")
 
 
   def pull(self, remote_path, local_path):
-    logging.debug("Pulling remote file {} to the local file {}.".format(remote_path, local_path))
+    logging.debug(f"Pulling remote file {remote_path} to the local file {local_path}.")
 
     remote_path = path_normalize(remote_path)
     local_path = path_normalize(local_path)
@@ -550,11 +551,11 @@ class PConnection(ABC):
 
       shutil.move(tmp_file2, local_path)
 
-    logging.debug("Pulling remote file {} to the local file {} is completed.".format(remote_path, local_path))
+    logging.debug(f"Pulling remote file {remote_path} to the local file {local_path} is completed.")
 
   #recursive pull
   def rpull(self, remote_path, local_path):
-    logging.debug("Recursive pulling of remote file {} to the local file {}.".format(remote_path, local_path))
+    logging.debug(f"Recursive pulling of remote file {remote_path} to the local file {local_path}.")
 
     remote_path = path_normalize(remote_path)
     local_path = path_normalize(local_path)
@@ -564,7 +565,7 @@ class PConnection(ABC):
     if self.isdir(remote_path):
       if os.path.lexists(local_path):
         if not os.path.isdir(local_path):
-          raise InterruptedError("Cannot download a folder {} to a non-folder path {}".format(remote_path, local_path))
+          raise InterruptedError(f"Cannot download a folder {remote_path} to a non-folder path {local_path}.")
       else:
         os.mkdir(local_path)
       
@@ -574,14 +575,14 @@ class PConnection(ABC):
     else:
       if os.path.lexists(local_path):
         if os.path.isdir(local_path):
-          raise InterruptedError("Cannot download a non-folder {} to a folder path {}".format(remote_path, local_path))
+          raise InterruptedError(f"Cannot download a non-folder {remote_path} to a folder path {local_path}.")
       
       self.pull(remote_path, local_path)
       
-    logging.debug("Recursive pulling of remote file {} to the local file {} is completes.".format(remote_path, local_path))
+    logging.debug(f"Recursive pulling of remote file {remote_path} to the local file {local_path} is completed.")
   
   def listdir(self, remote_path):
-    logging.debug("Listing file {}.".format(remote_path))
+    logging.debug(f"Listing file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
     self.__check_is_folder(remote_path)
@@ -590,7 +591,7 @@ class PConnection(ABC):
 
 
   def find(self, remote_path, child_first=False):
-    logging.debug("Finding (making a tree) of file {}.".format(remote_path))
+    logging.debug(f"Finding (making a tree) of file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
     self.__check_file_existance(remote_path)
@@ -610,18 +611,18 @@ class PConnection(ABC):
       return [remote_path]
 
   def mkdir(self, remote_path):
-    logging.debug("Making a directory file {}.".format(remote_path))
+    logging.debug(f"Making a directory file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
     self.__check_file_nonexistance(remote_path)
 
     self._mkdir(remote_path)
 
-    logging.debug("Making a directory file {} is completed.".format(remote_path))
+    logging.debug(f"Making a directory file {remote_path} is completed.")
 
   # Recursive mkdir
   def pmkdir(self, remote_path):
-    logging.debug("Recursive making of a directory file {}.".format(remote_path))
+    logging.debug(f"Recursive making of a directory file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
 
@@ -629,17 +630,17 @@ class PConnection(ABC):
       if self.isdir(remote_path):
         return
       else:
-        raise InterruptedError("File {} is not a folder.".format(remote_path))
+        raise InterruptedError(f"File {remote_path} is not a folder.")
 
     dirname, basename = os.path.split(remote_path)
     self.pmkdir(dirname)
     self.mkdir(remote_path)
 
-    logging.debug("Recursive making of a directory file {} is completed.".format(remote_path))
+    logging.debug(f"Recursive making of a directory file {remote_path} is completed.")
     
 
   def rmdir(self, remote_path):
-    logging.debug("Removing remote empty directory file {}.".format(remote_path))
+    logging.debug(f"Removing remote empty directory file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
     self.__check_is_folder(remote_path)
@@ -649,10 +650,10 @@ class PConnection(ABC):
 
     self._rmdir(remote_path)
 
-    logging.debug("Removing remote empty directory file {} is completed".format(remote_path))
+    logging.debug(f"Removing remote empty directory file {remote_path} is completed.")
 
   def rename(self, old_name, new_name):
-    logging.debug("Renaming remote file {} to {}.".format(old_name, new_name))
+    logging.debug(f"Renaming remote file {old_name} to {new_name}.")
 
     old_name = path_normalize(old_name)
     new_name = path_normalize(new_name)
@@ -662,11 +663,11 @@ class PConnection(ABC):
 
     self._rename(old_name, new_name)
 
-    logging.debug("Renaming remote file {} to {} is completed.".format(old_name, new_name))
+    logging.debug(f"Renaming remote file {old_name} to {new_name} is completed.")
 
   # mv one non-dircetory file to a non-directory file
   def fmv(self, old_name, new_name):
-    logging.debug("Moving remote non-directory file {} to a remote non-directory file {}.".format(old_name, new_name))
+    logging.debug(f"Moving remote non-directory file {old_name} to a remote non-directory file {new_name}.")
 
     self.__check_not_folder(old_name)
     self.__check_potencial_not_folder(old_name)
@@ -676,11 +677,11 @@ class PConnection(ABC):
     
     self.rename(old_name, new_name)
 
-    logging.debug("Moving remote non-directory file {} to a remote non-directory file {} is completed.".format(old_name, new_name))
+    logging.debug(f"Moving remote non-directory file {old_name} to a remote non-directory file {new_name} is completed.")
   
   # mv to dir
   def dmv(self, old_names, target_dir):
-    logging.debug("Moving remote file {} inside a remote target directory {}.".format(old_names, target_dir))
+    logging.debug(f"Moving remote file {old_names} inside a remote target directory {target_dir}.")
 
     old_names = [*map(path_normalize, old_names)]
     target_dir = path_normalize(target_dir)
@@ -698,7 +699,7 @@ class PConnection(ABC):
       if self.isdir(name):
         if basename in target_dir_ls:
           if not self.isdir(newname):
-            raise InterruptedError("Cannot overwrite remote non-directory {} with remote directory {}.".format(newname, name))
+            raise InterruptedError(f"Cannot overwrite remote non-directory {newname} with remote directory {name}.")
           self.dmv(self.xls(name), newname)
 
         else:
@@ -707,15 +708,15 @@ class PConnection(ABC):
       else:
         if basename in target_dir_ls:
           if self.isdir(newname):
-            raise InterruptedError("Cannot overwrite remote directory {} with remote non-directory {}.".format(newname, name))
+            raise InterruptedError(f"Cannot overwrite remote directory {newname} with remote non-directory {name}.")
         
         self.fmv(name, newname)
 
-    logging.debug("Moving remote files {} inside a remote directory {} is completed.".format(old_names, new_name))
+    logging.debug(f"Moving remote files {old_names} inside a remote directory {new_name} is completed.")
 
 
   def mv(self, old_names, new_name):
-    logging.debug("Moving remote file {} to a remote destination {}.".format(old_names, new_name))
+    logging.debug(f"Moving remote file {old_names} to a remote destination {new_name}.")
 
     if self.lexists(new_name) and self.isdir(new_name):
       self.dmv(old_names, new_name)
@@ -725,20 +726,20 @@ class PConnection(ABC):
         return
       elif len(old_names) > 1:
         if self.exists(new_name):
-          raise InterruptedError("Cannot move more than 1 file to non-directory {}.".format(new_name))
+          raise InterruptedError(f"Cannot move more than 1 file to non-directory {new_name}.")
         else:
-          raise InterruptedError("Cannot move more than 1 file to non-existent location {}.".format(new_name))
+          raise InterruptedError(f"Cannot move more than 1 file to non-existent location {new_name}.")
       else:
         if self.isdir(old_names[0]):
           self.rename(old_names[0], new_name)
         else:
           self.fmv(old_names[0], new_name)
 
-    logging.debug("Moving remote file {} to a remote destination {} is completed.".format(old_names, new_name))
+    logging.debug(f"Moving remote file {old_names} to a remote destination {new_name} is completed.")
           
 
   def fcp(self, old_name, new_name):
-    logging.debug("Copying remote non-directory file {} to a remote non-directory file {}.".format(old_name, new_name))
+    logging.debug(f"Copying remote non-directory file {old_name} to a remote non-directory file {new_name}.")
 
     self.__check_not_folder(old_name)
     self.__check_potencial_not_folder(old_name)
@@ -751,10 +752,10 @@ class PConnection(ABC):
         self.rm(new_name)
       self.push(tmp_file, new_name)
 
-    logging.debug("Copying remote non-directory file {} to a remote non-directory file {} is completed.".format(old_name, new_name))
+    logging.debug(f"Copying remote non-directory file {old_name} to a remote non-directory file {new_name} is completed.")
 
   def dcp(self, old_names, target_dir, recursive=False):
-    logging.debug("Copying remote file {} inside a remote directory {}. (recursive={})".format(old_names, target_dir, recursive))
+    logging.debug(f"Copying remote file {old_names} inside a remote directory {target_dir}. (recursive={recursive})")
 
     old_names = [*map(path_normalize, old_names)]
     target_dir = path_normalize(target_dir)
@@ -773,12 +774,12 @@ class PConnection(ABC):
       dirname, basename = os.path.split(name)
       newname = os.path.join(target_dir, basename)
 
-      logging.debug("New name of remote file {} will be {}.".format(name, newname))
+      logging.debug(f"New name of remote file {name} will be {newname}.")
 
       if recursive and self.isdir(name):
         if basename in target_dir_ls:
           if not self.isdir(newname):
-            raise InterruptedError("Cannot overwrite remote non-directory {} with remote directory {}.".format(newname, name))
+            raise InterruptedError(f"Cannot overwrite remote non-directory {newname} with remote directory {name}.")
 
         else:
           self.mkdir(newname)   
@@ -788,16 +789,16 @@ class PConnection(ABC):
       else:
         if basename in target_dir_ls:
           if self.isdir(newname):
-            raise InterruptedError("Cannot overwrite remote directory {} with remote non-directory {}.".format(newname, name))
+            raise InterruptedError(f"Cannot overwrite remote directory {newname} with remote non-directory {name}.")
         
         self.fcp(name, newname)
 
-    logging.debug("Copying remote file {} inside a remote directory {} is completed. (recursive={})".format(old_names, target_dir, recursive))
+    logging.debug(f"Copying remote file {old_names} inside a remote directory {target_dir} is completed. (recursive={recursive})")
 
 
 
   def cp(self, old_names, new_name, recursive=False):
-    logging.debug("Copying remote files {} to destination {} (recursive={}).".format(old_names, new_name, recursive))
+    logging.debug(f"Copying remote files {old_names} to destination {new_name} (recursive={recursive}).")
 
     if self.exists(new_name) and self.isdir(new_name):
       self.dcp(old_names, new_name, recursive=recursive)
@@ -807,38 +808,38 @@ class PConnection(ABC):
         return
       elif len(old_names) > 1:
         if self.exists(new_name):
-          raise InterruptedError("Cannot copy more than 1 file to non-directory {}.".format(new_name))
+          raise InterruptedError(f"Cannot copy more than 1 file to non-directory {new_name}.")
         else:
-          raise InterruptedError("Cannot copy more than 1 file to non-existent location {}.".format(new_name))
+          raise InterruptedError(f"Cannot copy more than 1 file to non-existent location {new_name}.")
       else:
         self.fcp(old_names[0], new_name)
 
-    logging.debug("Copying remote files {} to destination {} is completed (recursive={}).".format(old_names, new_name, recursive))
+    logging.debug(f"Copying remote files {old_names} to destination {new_name} is completed (recursive={recursive}).")
  
   
   def unlink(self, remote_path):
-    logging.debug("Unlinking remote non-directory file {}".format(remote_path))     
+    logging.debug(f"Unlinking remote non-directory file {remote_path}.")     
 
     remote_path = path_normalize(remote_path)
     self.__check_not_folder(remote_path)
 
     self._unlink(remote_path)
 
-    logging.debug("Unlinking remote non-directory file {} is completed".format(remote_path))     
+    logging.debug(f"Unlinking remote non-directory file {remote_path} is completed.")     
 
   def isdir(self, remote_path):
-    logging.debug("Is remote file {} a directory?".format(remote_path))     
+    logging.debug(f"Is remote file {remote_path} a directory?")     
 
     remote_path = path_normalize(remote_path)
     self.__check_file_existance(remote_path)
 
     ret = self._isdir(remote_path)
-    logging.debug("Remote file {} is a directory: {}".format(remote_path, ret)) 
+    logging.debug(f"Remote file {remote_path} is a directory: {ret}") 
 
     return ret    
 
   def rm(self, remote_path, recursive=False):
-    logging.debug("Deleting remote non-directory file {} (recursive={})".format(remote_path, recursive))     
+    logging.debug(f"Deleting remote non-directory file {remote_path} (recursive={recursive}).")     
 
     remote_path = path_normalize(remote_path)
     self.__check_file_existance(remote_path)
@@ -853,11 +854,11 @@ class PConnection(ABC):
         else: 
           self.unlink(f)
 
-    logging.debug("Deleting remote non-directory file {} is completed (recursive={})".format(remote_path, recursive))     
+    logging.debug(f"Deleting remote non-directory file {remote_path} is completed (recursive={recursive}).")     
        
 
   def ls(self, remote_path):
-    logging.debug("Listing remote directory file {}".format(remote_path))     
+    logging.debug(f"Listing remote directory file {remote_path}.")     
 
     remote_path = path_normalize(remote_path)
     self.__check_file_existance(remote_path)
@@ -869,7 +870,7 @@ class PConnection(ABC):
     else:
       ret = [os.path.basename(remote_path)]
 
-    logging.debug("Remote directory file {} contains {}.".format(remote_path, ret))
+    logging.debug(f"Remote directory file {remote_path} contains {ret}.")
     return ret
 
   # xls returns list of children with dirname

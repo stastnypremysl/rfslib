@@ -56,7 +56,7 @@ def _split_list_local_remote(gpaths):
   return (local, remote)
 
 def generic_cp(conn, sources, dest, recursive=False):
-  logging.debug("Starting generic_cp. (recursive={})".format(recursive))
+  logging.debug(f"Starting generic_cp. (recursive={recursive})")
 
   sources = map(generic_path_normalize, sources)
   dest = generic_path_normalize(dest)
@@ -77,7 +77,7 @@ def generic_cp(conn, sources, dest, recursive=False):
 
   if dest.remote:
     dest_dir = conn.lexists(dest.path) and conn.isdir(dest.path)
-    logging.debug("generic_cp: Destination {} is remote. It is a folder: {}".format(dest.path, dest_dir))
+    logging.debug(f"generic_cp: Destination {dest.path} is remote. It is a folder: {dest_dir}")
 
     logging.debug("generic_cp: Dealing with remote files. ")
     conn.cp(remote_src_paths, dest.path, recursive=recursive)
@@ -92,12 +92,12 @@ def generic_cp(conn, sources, dest, recursive=False):
     
   else:
     dest_dir = os.path.lexists(dest.path) and os.path.isdir(dest.path)
-    logging.debug("generic_cp: Destination {} is local. It is a folder: {}".format(dest.path, dest_dir))
+    logging.debug(f"generic_cp: Destination {dest.path} is local. It is a folder: {dest_dir}")
     
     logging.debug("generic_cp: Dealing with local files. ")
     for l_file in local_src_paths:
 
-      logging.debug("generic_cp, local: Coping {}.".format(l_file) )
+      logging.debug(f"generic_cp, local: Coping {l_file}." )
       if dest_dir:
         l_dirname, l_basename = os.path.split(l_file)
         lcopy(l_file, os.path.join(dest.path, l_basename))
@@ -125,7 +125,7 @@ def generic_mv(conn, sources, dest):
 
   if dest.remote:
     dest_dir = conn.lexists(dest.path) and conn.isdir(dest.path)
-    logging.debug("generic_mv: Destination {} is remote. It is a folder: {}".format(dest.path, dest_dir))
+    logging.debug(f"generic_mv: Destination {dest.path} is remote. It is a folder: {dest_dir}")
 
     logging.debug("generic_mv: Dealing with remote files. ")
     conn.mv(remote_src_paths, dest.path)
@@ -152,11 +152,11 @@ def generic_mv(conn, sources, dest):
     
   else:
     dest_dir = os.path.lexists(dest.path) and os.path.isdir(dest.path)
-    logging.debug("generic_mv: Destination {} is local. It is a folder: {}".format(dest.path, dest_dir))
+    logging.debug(f"generic_mv: Destination {dest.path} is local. It is a folder: {dest_dir}")
     
     logging.debug("generic_mv: Dealing with local files. ")
     for l_file in local_src_paths:
-      logging.debug("generic_mv, local: Moving {}.".format(l_file) )
+      logging.debug(f"generic_mv, local: Moving {l_file}." )
 
       if dest_dir:
         l_dirname, l_basename = os.path.split(l_file)
