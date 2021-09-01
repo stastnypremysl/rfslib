@@ -194,14 +194,14 @@ class PConnection(ABC):
 
   @abstractmethod
   def _listdir(self, remote_path:str) -> List[str]: 
-    """Protected method which returns a list of files in the folder including hidden files.
+    """Protected method which returns a list of files in the folder including hidden files. It might contain '.' and '..'.
     Undefined if the remote file doesn't exist or isn't a folder.
 
     Args:
       remote_path: The remote path of a remote folder.
 
     Returns:
-      List of files in the remote folder
+      A list of files in the remote folder.
       
     :meta public: 
     """
@@ -582,12 +582,29 @@ class PConnection(ABC):
     logging.debug(f"Recursive pulling of remote file {remote_path} to the local file {local_path} is completed.")
   
   def listdir(self, remote_path):
+    '''
+    Public method which returns a list of files in the folder including hidden files. It never returns '.' or '..'.
+
+    Args:
+      remote_path: The remote path of a remote folder.
+
+    Returns:
+      A list of files in the remote folder.
+
+    '''
     logging.debug(f"Listing file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
     self.__check_is_folder(remote_path)
     
-    return self._listdir(remote_path)
+    raw_list = self._listdir(remote_path)
+    
+    ret = []
+    for el in raw_list:
+      if (not el == '.') and (not el == '..'):
+        ret.append(el)
+
+    return ret
 
 
   def find(self, remote_path, child_first=False):
