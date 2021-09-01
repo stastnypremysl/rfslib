@@ -80,10 +80,10 @@ class Smb12PConnection(abstract_pconnection.PConnection):
 
   def __get_mask(self, attr):
     if attr.isDirectory:
-      mask = get_default_dmask()
+      mask = self.get_default_dmask()
 
     else:
-      mask = get_default_fmask()
+      mask = self.get_default_fmask()
 
     if attr.isReadOnly:
       mask = 0o222 & mask
