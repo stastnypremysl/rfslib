@@ -8,7 +8,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
   '''Class for FTP connection. Public interface with an exception of __init__ and close is inherited from PConnection.'''
 
 
-  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, username: str, password: str, port: int = 21, tls: bool = False, passive_mode: bool = False, debug_level: int = 1, connection_encoding: str = 'UTF8'):
+  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, username: str, password: str, port: int = 21, tls: bool = False, passive_mode: bool = False, debug_level: int = 1, connection_encoding: str = 'UTF8', dont_use_list_a: bool = False):
     '''The constructor of FtpPConnection.
     
     Args:
@@ -21,6 +21,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
       passive_mode: Enables passive mode of FTP connection.
       debug_level: Specifies how much logs should be generated. 0 - almost non, 1 - more, 2 - log almost everything
       connection_encoding: Encoding used for a connection.
+      dont_use_list_a: Disables usage of LIST -a command and uses LIST command instead. You might consider using option direct_write when using dont_use_list_a.
     '''
     super().__init__(settings)
 
@@ -38,7 +39,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
       debug_level = debug_level)
 
     self.__ftp = ftputil.FTPHost(host, username, password, session_factory=session_factory)
-    self.__ftp.use_list_a_option = True
+    self.__ftp.use_list_a_option = not dont_use_list_a
 
 
   def close(self):
