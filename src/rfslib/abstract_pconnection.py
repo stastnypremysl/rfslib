@@ -898,7 +898,7 @@ class PConnection(ABC):
       return os.path.join(remote_path, lfile)
 
     if self.isdir(remote_path):
-      return map(prepend_d, self.ls(remote_path))
+      return [*map(prepend_d, self.ls(remote_path))]
     else: 
       return [remote_path]
 
