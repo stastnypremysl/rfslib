@@ -69,7 +69,7 @@ class PGlobber():
           yield pathname
       return
     if not dirname:
-      if recursive and _isrecursive(basename):
+      if recursive and self._isrecursive(basename):
         yield from self._glob2(dirname, basename, dironly)
       else:
         yield from self.__glob1(dirname, basename, dironly)
