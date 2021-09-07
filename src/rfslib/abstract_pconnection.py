@@ -474,7 +474,7 @@ class PConnection(ABC):
     return os.path.join(dirname, '.' + basename + '.tmp' + str(random.randint(10000,65555)))
     
 
-  def push(self, local_path, remote_path):
+  def push(self, local_path: str, remote_path: str):
     """Uploads/pushes a file from a local storage to a remote storage in the binary form.
 
     Args:
@@ -504,7 +504,7 @@ class PConnection(ABC):
     logging.debug(f"Pushing local file {local_path} to the remote file {remote_path} is completed.")
 
   #recursive push
-  def rpush(self, local_path, remote_path):
+  def rpush(self, local_path: str, remote_path: str):
     logging.debug(f"Recursive pushing of local file {local_path} to the remote file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
@@ -532,7 +532,7 @@ class PConnection(ABC):
     logging.debug(f"Recursive pushing of local file {local_path} to the remote file {remote_path} is completed.")
 
 
-  def pull(self, remote_path, local_path):
+  def pull(self, remote_path: str, local_path: str):
     logging.debug(f"Pulling remote file {remote_path} to the local file {local_path}.")
 
     remote_path = path_normalize(remote_path)
@@ -554,7 +554,7 @@ class PConnection(ABC):
     logging.debug(f"Pulling remote file {remote_path} to the local file {local_path} is completed.")
 
   #recursive pull
-  def rpull(self, remote_path, local_path):
+  def rpull(self, remote_path: str, local_path: str):
     logging.debug(f"Recursive pulling of remote file {remote_path} to the local file {local_path}.")
 
     remote_path = path_normalize(remote_path)
@@ -581,7 +581,7 @@ class PConnection(ABC):
       
     logging.debug(f"Recursive pulling of remote file {remote_path} to the local file {local_path} is completed.")
   
-  def listdir(self, remote_path):
+  def listdir(self, remote_path: str):
     '''
     Public method which returns a list of files in the folder including hidden files. It never returns '.' or '..'.
 
@@ -607,7 +607,17 @@ class PConnection(ABC):
     return ret
 
 
-  def find(self, remote_path, child_first=False):
+  def find(self, remote_path: str, child_first: bool = False) -> List[str]:
+    '''
+    A public method which returns DFS (depth-first search) of remote_path including hidden files. It never returns '.' or '..'.
+
+    Args:
+      child_first: If True, childs of a directory will be returned before the directory itself.
+
+    Returns:
+      The result of DFS as a list of remote_paths.
+    
+    '''
     logging.debug(f"Finding (making a tree) of file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
@@ -627,10 +637,20 @@ class PConnection(ABC):
     else:
       return [remote_path]
 
-  def mkdir(self, remote_path):
+  def mkdir(self, remote_path: str):
+    '''
+    A public method, which creates a folder. If directory can't be created, because a file already exist, an exception is raised.
+    No other directories on path will be created and if any of them is missing, an exception is raised.
+
+    Args:
+      remote_path: A path, where to create a new directory.
+    '''
     logging.debug(f"Making a directory file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
+    dirname, _ = os.path.split(remote_path)
+
+    self.__check_is_folder(dirname)
     self.__check_file_nonexistance(remote_path)
 
     self._mkdir(remote_path)
@@ -638,7 +658,7 @@ class PConnection(ABC):
     logging.debug(f"Making a directory file {remote_path} is completed.")
 
   # Recursive mkdir
-  def pmkdir(self, remote_path):
+  def pmkdir(self, remote_path: str):
     logging.debug(f"Recursive making of a directory file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
@@ -649,14 +669,14 @@ class PConnection(ABC):
       else:
         raise InterruptedError(f"File {remote_path} is not a folder.")
 
-    dirname, basename = os.path.split(remote_path)
+    dirname, _ = os.path.split(remote_path)
     self.pmkdir(dirname)
     self.mkdir(remote_path)
 
     logging.debug(f"Recursive making of a directory file {remote_path} is completed.")
     
 
-  def rmdir(self, remote_path):
+  def rmdir(self, remote_path: str):
     logging.debug(f"Removing remote empty directory file {remote_path}.")
 
     remote_path = path_normalize(remote_path)
@@ -669,7 +689,7 @@ class PConnection(ABC):
 
     logging.debug(f"Removing remote empty directory file {remote_path} is completed.")
 
-  def rename(self, old_name, new_name):
+  def rename(self, old_name: str, new_name: str):
     logging.debug(f"Renaming remote file {old_name} to {new_name}.")
 
     old_name = path_normalize(old_name)
@@ -683,7 +703,7 @@ class PConnection(ABC):
     logging.debug(f"Renaming remote file {old_name} to {new_name} is completed.")
 
   # mv one non-dircetory file to a non-directory file
-  def fmv(self, old_name, new_name):
+  def fmv(self, old_name: str, new_name: str):
     logging.debug(f"Moving remote non-directory file {old_name} to a remote non-directory file {new_name}.")
 
     self.__check_not_folder(old_name)
@@ -697,7 +717,7 @@ class PConnection(ABC):
     logging.debug(f"Moving remote non-directory file {old_name} to a remote non-directory file {new_name} is completed.")
   
   # mv to dir
-  def dmv(self, old_names, target_dir):
+  def dmv(self, old_names: List[str], target_dir: str):
     logging.debug(f"Moving remote file {old_names} inside a remote target directory {target_dir}.")
 
     old_names = [*map(path_normalize, old_names)]
@@ -732,7 +752,7 @@ class PConnection(ABC):
     logging.debug(f"Moving remote files {old_names} inside a remote directory {new_name} is completed.")
 
 
-  def mv(self, old_names, new_name):
+  def mv(self, old_names: List[str], new_name: str):
     logging.debug(f"Moving remote file {old_names} to a remote destination {new_name}.")
 
     if self.lexists(new_name) and self.isdir(new_name):
@@ -755,7 +775,7 @@ class PConnection(ABC):
     logging.debug(f"Moving remote file {old_names} to a remote destination {new_name} is completed.")
           
 
-  def fcp(self, old_name, new_name):
+  def fcp(self, old_name: str, new_name: str):
     logging.debug(f"Copying remote non-directory file {old_name} to a remote non-directory file {new_name}.")
 
     self.__check_not_folder(old_name)
@@ -771,7 +791,7 @@ class PConnection(ABC):
 
     logging.debug(f"Copying remote non-directory file {old_name} to a remote non-directory file {new_name} is completed.")
 
-  def dcp(self, old_names, target_dir, recursive=False):
+  def dcp(self, old_names: List[str], target_dir: str, recursive: bool = False):
     logging.debug(f"Copying remote file {old_names} inside a remote directory {target_dir}. (recursive={recursive})")
 
     old_names = [*map(path_normalize, old_names)]
@@ -814,7 +834,7 @@ class PConnection(ABC):
 
 
 
-  def cp(self, old_names, new_name, recursive=False):
+  def cp(self, old_names: List[str], new_name: str, recursive: bool = False):
     logging.debug(f"Copying remote files {old_names} to destination {new_name} (recursive={recursive}).")
 
     if self.exists(new_name) and self.isdir(new_name):
@@ -834,7 +854,7 @@ class PConnection(ABC):
     logging.debug(f"Copying remote files {old_names} to destination {new_name} is completed (recursive={recursive}).")
  
   
-  def unlink(self, remote_path):
+  def unlink(self, remote_path: str):
     logging.debug(f"Unlinking remote non-directory file {remote_path}.")     
 
     remote_path = path_normalize(remote_path)
@@ -844,7 +864,7 @@ class PConnection(ABC):
 
     logging.debug(f"Unlinking remote non-directory file {remote_path} is completed.")     
 
-  def isdir(self, remote_path):
+  def isdir(self, remote_path: str):
     logging.debug(f"Is remote file {remote_path} a directory?")     
 
     remote_path = path_normalize(remote_path)
@@ -855,7 +875,7 @@ class PConnection(ABC):
 
     return ret    
 
-  def rm(self, remote_path, recursive=False):
+  def rm(self, remote_path: str, recursive: bool = False):
     logging.debug(f"Deleting remote non-directory file {remote_path} (recursive={recursive}).")     
 
     remote_path = path_normalize(remote_path)
@@ -874,7 +894,7 @@ class PConnection(ABC):
     logging.debug(f"Deleting remote non-directory file {remote_path} is completed (recursive={recursive}).")     
        
 
-  def ls(self, remote_path):
+  def ls(self, remote_path: str):
     logging.debug(f"Listing remote directory file {remote_path}.")     
 
     remote_path = path_normalize(remote_path)
@@ -891,7 +911,7 @@ class PConnection(ABC):
     return ret
 
   # xls returns list of children with dirname
-  def xls(self, remote_path):
+  def xls(self, remote_path: str):
     remote_path = path_normalize(remote_path)
 
     def prepend_d(lfile):
@@ -902,7 +922,7 @@ class PConnection(ABC):
     else: 
       return [remote_path]
 
-  def touch(self, remote_path):
+  def touch(self, remote_path: str):
     with tempfile.NamedTemporaryFile() as _tmp_file:
       tmp_file = _tmp_file.name
       self.push(tmp_file, remote_path)    
