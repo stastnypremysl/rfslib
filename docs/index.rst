@@ -18,6 +18,16 @@ If you want to create a new pdf documentation, you are required to install also 
    :caption: Contents:
 
 
+\rfslib module
+------------------------------------
+
+.. automodule:: rfslib
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:
+
+
 
 \rfslib.abstract\_pconnection module
 ------------------------------------
