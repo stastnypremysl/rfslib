@@ -1,4 +1,4 @@
-from rfslib import abstract_pconnection
+from rfslib import abstract_pconnection, pconnection_settings
 import ftplib
 import ftputil
 
@@ -8,7 +8,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
   '''Class for FTP connection. Public interface with an exception of __init__ and close is inherited from PConnection.'''
 
 
-  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, username: str, password: str, port: int = 21, tls: bool = False, passive_mode: bool = False, debug_level: int = 1, connection_encoding: str = 'UTF8', dont_use_list_a: bool = False):
+  def __init__(self, settings: pconnection_settings, host: str, username: str, password: str, port: int = 21, tls: bool = False, passive_mode: bool = False, debug_level: int = 1, connection_encoding: str = 'UTF8', dont_use_list_a: bool = False):
     '''The constructor of FtpPConnection.
     
     Args:

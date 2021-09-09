@@ -7,6 +7,7 @@ import os.path
 import shutil
 import codecs
 
+from rfslib import pconnection_settings
 from rfslib.path_utils import path_normalize
 
 import random
@@ -16,36 +17,6 @@ import logging, sys
 import re
 re_public_var = re.compile(r'^[^_].*')
 #re_not_dot_dotdot = re.compile(r'^[^.][^.]*.*
-
-class p_connection_settings():
-  '''This object represents settings appliable for all PConnection instances (instances of class, which inherits from PConnection).'''
-  def __init__(self):
-    '''The constructor inicializes the class to default values.'''
-    pass
-  
-  text_transmission:bool = False
-  '''If true, all files, which will be transmitted, will be recoded from local_encoding to remote_encoding and from local_crlf to remote_crlf. If False, there will be no encoding done during transmission.'''
-
-  local_encoding:str = 'UTF8'
-  '''The encoding of local text files. (eg. 'UTF8')'''
-  remote_encoding:str = 'UTF8'
-  '''The encoding of remote text files. (eg. 'cp1250')'''
-
-  local_crlf:bool = False
-  '''Does local files use CRLF? If True, it is supposed, they do. If False, it is supposed, they use LF.'''
-  remote_crlf:bool = False
-  '''Does remote files use CRLF? If True, it is supposed, they do. If False, it is supposed, they use LF.'''
-
-  direct_write:bool = False
-  '''NOT IMPLEMENTED YET. If True, push will write output directly to file. If False all push operations on regular files will create firstly tmp file in target folder and then move result to file.'''
-
-  skip_validation:bool = False
-  '''NOT IMPLEMENTED YED. If True, all validations of input will be skipped. Undefined behavior may happen if input is wrong. Increses performance.'''
-
-  default_fmask:int = 0o0133
-  '''If mode (permissions) of a nondirectory file can't be fetched, this value will be used instead of it.'''
-  default_dmask:int = 0o0022
-  '''If mode (permissions) of a directory can't be fetched, this value will be used instead of it.'''
 
 
 class p_stat_result():
@@ -102,56 +73,56 @@ def _stat_unpack(pk_stat) -> p_stat_result:
 
 
 class PConnection(ABC):
-  def set_settings(self, settings: p_connection_settings):
+  def set_settings(self, settings: pconnection_settings):
     '''The procedure sets all generic settings for PConnection.
 
     Args:
-      settings: A p_connection_settings object with all generic settings for PConnection. If some attribute in object is missing, no operation will be done with it.
+      settings: A pconnection_settings object with all generic settings for PConnection. If some attribute in object is missing, no operation will be done with it.
     '''
 
-    for attr in filter(re_public_var.match, dir(p_connection_settings)):
+    for attr in filter(re_public_var.match, dir(pconnection_settings)):
       if hasattr(settings, attr):
         logging.debug(f"Setting self.__{attr} to {getattr(settings, attr)}.")
         exec(f'self._PConnection__{attr} = settings.{attr}')
 
 
 
-  def get_settings(self) -> p_connection_settings:
+  def get_settings(self) -> pconnection_settings:
     '''The procedure sets all generic settings for PConnection.
 
     Returns:
-      A p_connection_settings object with all generic settings of PConnection.
+      A pconnection_settings object with all generic settings of PConnection.
     '''
-    ret = p_connection_settings()
+    ret = pconnection_settings()
 
-    for attr in filter(re_public_var.match, dir(p_connection_settings())):
+    for attr in filter(re_public_var.match, dir(pconnection_settings())):
       exec(f'ret.{attr} = self._PConnection__{attr}')
 
     return ret
 
 
   def get_default_fmask(self) -> int:
-    '''Returns default_fmask settings. For more details see p_connection_settings.'''
+    '''Returns default_fmask settings. For more details see pconnection_settings.'''
     return self.__default_fmask
 
 
   def get_default_dmask(self) -> int:
-    '''Returns default_dmask settings. For more details see p_connection_settings.'''
+    '''Returns default_dmask settings. For more details see pconnection_settings.'''
     return self.__default_dmask
  
 
-  def __init__(self, settings: p_connection_settings):
+  def __init__(self, settings: pconnection_settings):
     """The constructor of a abstract class. If it is not called from child class, the behavior is undefined.
 
     If local_encoding and remote_encoding have same values, no recoding is done. Analogically if local_crlf and remote_crlf is same, no substitution between LF and CRLF is done.
 
     Args:
-      settings: A p_connection_settings object with all generic settings for PConnection. Be sure, that all needed attributes are present, or AttributeError will be raised.
+      settings: A pconnection_settings object with all generic settings for PConnection. Be sure, that all needed attributes are present, or AttributeError will be raised.
 
     :meta public:
     """
 
-    for attr in filter(re_public_var.match, dir(p_connection_settings())):
+    for attr in filter(re_public_var.match, dir(pconnection_settings())):
       if not hasattr(settings, attr):
         raise AttributeError(f"Parameter settings argument doesn't have attribute {attr}")
 

@@ -1,11 +1,11 @@
-from rfslib import abstract_pconnection
+from rfslib import abstract_pconnection, pconnection_settings
 
 import os, sys, shutil
 
 class FsPConnection(abstract_pconnection.PConnection):
   '''Class for operating with local filesystem. Public interface with an exception of __init__ and close is inherited from PConnection.'''
 
-  def __init__(self, settings: abstract_pconnection.p_connection_settings):
+  def __init__(self, settings: pconnection_settings):
     '''The constructor of FsPConnection.
     
     Args:

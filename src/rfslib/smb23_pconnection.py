@@ -1,7 +1,7 @@
 import smbclient as smb
 import smbclient.path as spath
 
-from rfslib import abstract_pconnection
+from rfslib import abstract_pconnection, pconnection_settings
 import socket
 from os.path import split
 
@@ -24,7 +24,7 @@ def config_smb23(no_dfs: bool = False, disable_secure_negotiate: bool = False, d
 class Smb23PConnection(abstract_pconnection.PConnection):
   '''Class for SMB connection version 2 or 3. Public interface with an exception of __init__ and close is inherited from PConnection.'''
 
-  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, service_name: str, username: str, password: str, port: int = 445, enable_encryption: bool = False, dont_require_signing: bool = False):
+  def __init__(self, settings: pconnection_settings, host: str, service_name: str, username: str, password: str, port: int = 445, enable_encryption: bool = False, dont_require_signing: bool = False):
     '''The constructor of Smb23PConnection. Opens SMB connection version 2 or 3, when called.
 
     Args:

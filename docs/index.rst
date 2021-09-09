@@ -24,6 +24,7 @@ If you want to create a new pdf documentation, you are required to install also 
 .. automodule:: rfslib
    :members:
    :undoc-members:
+   :imported-members:
    :show-inheritance:
    :inherited-members:
 

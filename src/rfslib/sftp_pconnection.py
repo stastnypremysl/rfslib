@@ -1,5 +1,5 @@
 import paramiko
-from rfslib import abstract_pconnection
+from rfslib import abstract_pconnection, pconnection_settings
 
 from stat import S_ISDIR
 import logging
@@ -7,7 +7,7 @@ import logging
 class SftpPConnection(abstract_pconnection.PConnection):
   '''Class for SFTP connection. Public interface with an exception of __init__ and close is inherited from PConnection.'''
 
-  def __init__(self, settings: abstract_pconnection.p_connection_settings, host: str, username: str, password: str = None, keyfile : str = '~/.ssh/id_rsa', port: int = 22, no_host_key_checking: bool = False):
+  def __init__(self, settings: pconnection_settings, host: str, username: str, password: str = None, keyfile : str = '~/.ssh/id_rsa', port: int = 22, no_host_key_checking: bool = False):
     '''The constructor of SftpPConnection. Opens SFTP connection, when called. If None password is specified, the key authentication will be used. Otherwise the password authentication will be used.
     
     Args:

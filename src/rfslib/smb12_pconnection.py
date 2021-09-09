@@ -1,12 +1,12 @@
 from smb.SMBConnection import SMBConnection
 
-from rfslib import abstract_pconnection
+from rfslib import abstract_pconnection, pconnection_settings
 import socket
 from os.path import split
 
 class Smb12PConnection(abstract_pconnection.PConnection):
   '''Class for SMB connection version 1 or 2. Public interface with an exception of __init__ and close is inherited from PConnection.'''
-  def __init__(self, settings: abstract_pconnection.p_connection_settings, 
+  def __init__(self, settings: abstract_pconnection.pconnection_settings, 
     host: str, service_name: str, username: str, password: str, 
     port: int = 139, use_direct_tcp: bool = False, client_name: str = "RFS", use_ntlm_v1: bool = False):
     '''The constructor of Smb12PConnection. Opens SMB connection version 1 or 2, when called.
