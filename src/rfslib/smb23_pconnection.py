@@ -7,19 +7,26 @@ from os.path import split
 
 import shutil, stat
 
-def config_smb23(no_dfs: bool = False, disable_secure_negotiate: bool = False, dfs_domain_controller: str = None):
+def config_smb23(username: str = None, password: str = None, no_dfs: bool = False, disable_secure_negotiate: bool = False, dfs_domain_controller: str = None, auth_protocol: str = 'negotiate'):
   '''The procedure changes global setting for SMB version 2 or 3 across all connection. Don't change value, if any SMB connection version 2 or 3 is active.
 
   Args:
+    username: Optional default username used when creating a new SMB session.
+    password: Optional default password used when creating a new SMB session.
     no_dfs: Disables DFS support - useful as a bug fix.
     disable_secure_negotiate: Disables secure negotiate requirement for a SMB connection.
     dfs_domain_controller: The DFS domain controller address. Useful in case, when rfstools fails to find it themself.
+    auth_protocol: The protocol to use for authentication. Possible values are 'negotiate', 'ntlm' or 'kerberos'. Defaults to 'negotiate'.
   '''
-  smb.ClientConfig(skip_dfs=no_dfs, 
-       require_secure_negotiate=not disable_secure_negotiate)
+  smb.ClientConfig(
+    username=username,
+    password=password,
+    skip_dfs=no_dfs, 
+    require_secure_negotiate=not disable_secure_negotiate
+    domain_controller=dfs_domain_controller,
+    auth_protocol=auth_protocol
+  )
   
-  if dfs_domain_controller is not None:
-    smb.ClientConfig(domain_controller=dfs_domain_controller)
 
 class Smb23PConnection(abstract_pconnection.PConnection):
   '''Class for SMB connection version 2 or 3. Public interface with an exception of __init__ and close is inherited from PConnection.'''
