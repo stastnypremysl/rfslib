@@ -22,7 +22,7 @@ def config_smb23(username: str = None, password: str = None, no_dfs: bool = Fals
     username=username,
     password=password,
     skip_dfs=no_dfs, 
-    require_secure_negotiate=not disable_secure_negotiate
+    require_secure_negotiate=not disable_secure_negotiate,
     domain_controller=dfs_domain_controller,
     auth_protocol=auth_protocol
   )
