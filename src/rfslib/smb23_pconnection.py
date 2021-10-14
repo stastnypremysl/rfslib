@@ -102,11 +102,17 @@ class Smb23PConnection(abstract_pconnection.PConnection):
     smb.unlink(p_remote_path)
 
   def _exists(self, remote_path):
+    if remote_path = '':
+      return False
+
     p_remote_path = self.__prefix_path(remote_path)
 
     return spath.exists(p_remote_path)
   
   def _lexists(self, remote_path):
+    if remote_path = '':
+      return False
+
     p_remote_path = self.__prefix_path(remote_path)
 
     return spath.lexists(p_remote_path)
