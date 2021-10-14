@@ -836,14 +836,22 @@ class PConnection(ABC):
     logging.debug(f"Unlinking remote non-directory file {remote_path} is completed.")     
 
   def isdir(self, remote_path: str):
+    '''
+    A public method, which checks, whether there is an folder on remote_path. If yes, true is returned. Otherwise false.
+
+    Args:
+      remote_path: A path, where to check, whether there is an folder.
+    '''
     logging.debug(f"Is remote file {remote_path} a directory?")     
 
     remote_path = path_normalize(remote_path)
-    self.__check_file_existance(remote_path)
 
-    ret = self._isdir(remote_path)
+    if self.exists(remote_path):
+      ret = self._isdir(remote_path)
+    else:
+      ret = False
+
     logging.debug(f"Remote file {remote_path} is a directory: {ret}") 
-
     return ret    
 
   def rm(self, remote_path: str, recursive: bool = False):
