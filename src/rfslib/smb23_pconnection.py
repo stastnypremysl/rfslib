@@ -26,7 +26,15 @@ def config_smb23(username: str = None, password: str = None, no_dfs: bool = Fals
     domain_controller=dfs_domain_controller,
     auth_protocol=auth_protocol
   )
+
+
+def _cointain_toxic_char(remote_path):
+  for char in "?<>\:*|":
+    if char in remote_path:
+      return True
   
+  return False
+
 
 class Smb23PConnection(abstract_pconnection.PConnection):
   '''Class for SMB connection version 2 or 3. Public interface with an exception of __init__ and close is inherited from PConnection.'''
@@ -102,7 +110,7 @@ class Smb23PConnection(abstract_pconnection.PConnection):
     smb.unlink(p_remote_path)
 
   def _exists(self, remote_path):
-    if remote_path == '':
+    if remote_path == '' or _contain_toxic_char(remote_path):
       return False
 
     p_remote_path = self.__prefix_path(remote_path)
@@ -110,7 +118,7 @@ class Smb23PConnection(abstract_pconnection.PConnection):
     return spath.exists(p_remote_path)
   
   def _lexists(self, remote_path):
-    if remote_path == '':
+    if remote_path == '' or _contain_toxic_char(remote_path):
       return False
 
     p_remote_path = self.__prefix_path(remote_path)
