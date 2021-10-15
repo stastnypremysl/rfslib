@@ -71,7 +71,7 @@ class FtpPConnection(abstract_pconnection.PConnection):
 
   def _exists(self, remote_path):
     # Workaround
-    if remote_path = '':
+    if remote_path == '':
       return False
 
     return self.__ftp.path.exists(remote_path)
