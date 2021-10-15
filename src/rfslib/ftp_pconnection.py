@@ -70,6 +70,10 @@ class FtpPConnection(abstract_pconnection.PConnection):
     self.__ftp.unlink(remote_path)
 
   def _exists(self, remote_path):
+    # Workaround
+    if remote_path = '':
+      return False
+
     return self.__ftp.path.exists(remote_path)
   
   def _lexists(self, remote_path):
