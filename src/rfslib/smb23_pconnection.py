@@ -28,7 +28,7 @@ def config_smb23(username: str = None, password: str = None, no_dfs: bool = Fals
   )
 
 
-def _cointain_toxic_char(remote_path):
+def _contain_toxic_char(remote_path):
   for char in "?<>\:*|":
     if char in remote_path:
       return True
