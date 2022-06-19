@@ -1,6 +1,5 @@
 stages:
-- build
-- test
+- examine
 - deploy
 
 image: debian:stable
@@ -22,7 +21,7 @@ default:
     - mkdir -p ~/.pip
 
 test-fs:
-  stage: test
+  stage: examine
   script:
     - pip install .
 
@@ -30,7 +29,7 @@ test-fs:
  #   - ./tests/generic-tests
 
 test-sftp:
-  stage: test
+  stage: examine
   script:
     - pip install .
 
@@ -50,7 +49,7 @@ test-sftp:
 
 
 test-ftp:
-  stage: test
+  stage: examine
   script:
     - pip install .
 
@@ -72,7 +71,7 @@ test-ftp:
 
   
 test-smb12:
-  stage: test
+  stage: examine
   script:
     - pip install .
 
@@ -99,7 +98,7 @@ test-smb12:
 
 
 test-smb23:
-  stage: test
+  stage: examine
   script:
     - pip install .
 
@@ -139,7 +138,7 @@ test-smb23:
 #    - tox -e py36,flake8
 
 build:
-  stage: build
+  stage: examine
   script:
     - python setup.py sdist bdist_wheel
     # an alternative approach is to install and run:
@@ -223,16 +222,15 @@ deploy-doc:
 
 
 
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
-# pages:
- # stage: build
- # script:
- #   - pip install sphinx sphinx-rtd-theme
- #   - cd doc ; make html
- #   - mv build/html/ ../public/
- # artifacts:
- #   paths:
- #     - public
- # rules:
- #   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
+sast:
+  stage: examine
+secret_detection:
+  stage: examine
+dependency_scanning:
+  stage: examine
