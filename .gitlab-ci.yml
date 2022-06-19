@@ -230,7 +230,12 @@ include:
 
 sast:
   stage: examine
+  before_script: []
+
 secret_detection:
   stage: examine
+  before_script: []
+
 dependency_scanning:
   stage: examine
+  before_script: []
