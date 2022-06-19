@@ -8,8 +8,5 @@ Libraries provides Python3 universal interface for multiple protocols like SFTP,
 TODO
 
 ## Documentation
-Documentation can be found at repository https://git.profinit.eu/rfs/rfslib-docs
-
-## TODO
-* Transactions 
+Documentation can be found at repository [rfslib-docs](https://gitlab.com/rfs4/rfslib-docs)
 
