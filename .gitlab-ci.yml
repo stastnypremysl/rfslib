@@ -231,23 +231,23 @@ include:
 sast:
   stage: examine
   before_script:
-    - pip install --user .
+    - pip3 install --user .
 
 secret_detection:
   stage: examine
   before_script:
-    - pip install --user .
+    - pip3 install --user .
 
 dependency_scanning:
   stage: examine
   before_script:
-    - pip install --user .
+    - pip3 install --user .
 
 
 sonarcloud-check:
   stage: examine
   before_script: 
-    - pip install --user .
+    - pip3 install --user .
 
   image:
     name: sonarsource/sonar-scanner-cli:latest
