@@ -192,7 +192,7 @@ deploy-doc:
       }
 
       pushd /tmp
-      git clone https://oauth2:${CI_DOCS_ACCESS_TOKEN}@git.profinit.eu/rfs/rfslib-docs/
+      git clone https://oauth2:${CI_DOCS_ACCESS_TOKEN}@gitlab.com/rfs4/rfslib-docs
       popd
 
       pushd $doc_repo
